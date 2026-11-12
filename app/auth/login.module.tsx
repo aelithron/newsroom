@@ -1,5 +1,5 @@
 "use client"
-import { authClient } from "@/utils/auth";
+import { authClient } from "@/utils/auth-client";
 import { faNewspaper, faSignIn, faUser, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { type SetStateAction, type Dispatch, useState } from "react";
@@ -23,26 +23,50 @@ export default function AuthForm() {
   )
 }
 function SignUpForm({ email, setEmail, password, setPassword }: AuthTypes) {
-  async function emailAuth() {
-    //await authClient.signUp.email({  });
+  const [name, setName] = useState<string>("");
+  const [emailConf, setEmailConf] = useState<string>("");
+  async function emailAuth(e: React.SubmitEvent) {
+    e.preventDefault();
+    if (email.toLowerCase().trim() !== emailConf.toLowerCase().trim()) {
+      alert(`Your "Email" doesn't match "Confirm Email", please correct these!`);
+      return;
+    }
+    const res = await authClient.signUp.email({ name: name.trim(), email: email.toLowerCase().trim(), password: password.trim() });
+    if (res.error) {
+      alert(`Sign up failed! ${res.error.message}`);
+      return;
+    }
   }
   return (
-    <form className="flex flex-col justify-center text-center">
-      
+    <form className="flex flex-col justify-center text-center gap-0.5" onSubmit={(e) => emailAuth(e)}>
+      <label className="font-semibold flex justify-between w-64 mx-auto"><p>Name</p> <p className="text-red-400">*</p></label>
+      <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="bg-slate-300 dark:bg-slate-800 w-64 p-1 rounded-lg mx-auto" />
+      <label className="font-semibold flex justify-between w-64 mx-auto"><p>Email</p> <p className="text-red-400">*</p></label>
+      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="bg-slate-300 dark:bg-slate-800 w-64 p-1 rounded-lg mx-auto" />
+      <label className="font-semibold flex justify-between w-64 mx-auto"><p>Confirm Email</p> <p className="text-red-400">*</p></label>
+      <input type="email" value={emailConf} onChange={(e) => setEmailConf(e.target.value)} className="bg-slate-300 dark:bg-slate-800 w-64 p-1 rounded-lg mx-auto" />
+      <label className="font-semibold flex justify-between w-64 mx-auto"><p>Password</p> <p className="text-red-400">*</p></label>
+      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="bg-slate-300 dark:bg-slate-800 w-64 p-1 rounded-lg mx-auto" />
+      <button type="submit" className="bg-violet-500 rounded-xl p-2 w-fit mx-auto mt-3"><FontAwesomeIcon icon={faUserPlus} /> Sign Up</button>
     </form>
   )
 }
 function SignInForm({ email, setEmail, password, setPassword }: AuthTypes) {
   async function emailAuth(e: React.SubmitEvent) {
     e.preventDefault();
-    await authClient.signIn.email({ email, password });
+    const res = await authClient.signIn.email({ email: email.toLowerCase().trim(), password: password.trim() });
+    if (res.error) {
+      alert(`Login failed! ${res.error.message}`);
+      return;
+    }
   }
   return (
     <form className="flex flex-col justify-center text-center gap-0.5" onSubmit={(e) => emailAuth(e)}>
-      <label className="font-semibold">Email</label>
+      <label className="font-semibold flex justify-between w-64 mx-auto"><p>Email</p> <p className="text-red-400">*</p></label>
       <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="bg-slate-300 dark:bg-slate-800 w-64 p-1 rounded-lg mx-auto" />
-      <label className="font-semibold mt-2">Password</label>
+      <label className="font-semibold flex justify-between w-64 mx-auto"><p>Password</p> <p className="text-red-400">*</p></label>
       <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="bg-slate-300 dark:bg-slate-800 w-64 p-1 rounded-lg mx-auto" />
+      <button type="submit" className="bg-violet-500 rounded-xl p-2 w-fit mx-auto mt-3"><FontAwesomeIcon icon={faSignIn} /> Sign In</button>
     </form>
   )
 }
