@@ -9,10 +9,10 @@ export const auth = betterAuth({
   socialProviders: {
     google: {
       enabled: true,
-      clientId: "",
-      clientSecret: ""
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET
     }
   }
 });
 
-export const authClient = createAuthClient({ });
+export const authClient = createAuthClient({ baseURL: process.env.BETTER_AUTH_URL });

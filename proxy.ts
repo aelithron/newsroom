@@ -8,4 +8,4 @@ export async function proxy(request: NextRequest) {
   return NextResponse.next();
 }
 
-export const config = { matcher: ["/home/**"] };
+export const config = { matcher: ["/home/:path*"] };
