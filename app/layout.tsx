@@ -6,7 +6,7 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 config.autoAddCss = false;
 
 export const metadata: Metadata = { title: { template: "%s | Newsroom", default: "Newsroom" }, description: "A simple tool to compile things for a newsroom!" };
-const ibmPlexSerif = IBM_Plex_Serif({ subsets: ["latin"], weight: "400" })
+const ibmPlexSerif = IBM_Plex_Serif({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700"] })
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

@@ -6,17 +6,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { type SetStateAction, type Dispatch, useState } from "react";
 
 type AuthTypes = { email: string, setEmail: Dispatch<SetStateAction<string>>, password: string, setPassword: Dispatch<SetStateAction<string>> }
-export default function AuthForm() {
-  const [mode, setMode] = useState<"signIn" | "signUp">("signIn");
+export default function AuthForm({ defaultMode }: { defaultMode: "signUp" | "signIn" }) {
+  const [mode, setMode] = useState<"signIn" | "signUp">(defaultMode);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  
+
   return (
     <div className="flex flex-col">
       <h1 className="text-xl font-semibold text-center"><FontAwesomeIcon icon={faUser} />  {mode === "signUp" ? "Create an account on" : "Sign in to"} <FontAwesomeIcon icon={faNewspaper} /> Newsroom</h1>
       <div className="grid grid-cols-2 grid-rows-1 gap-4 mt-2 bg-slate-100 dark:bg-slate-900 p-2 rounded-lg w-fit mx-auto mb-4">
-        <button onClick={() => setMode("signIn")} className={`p-2 text-lg ${mode === "signIn" ? "bg-violet-300 dark:bg-violet-600" : "bg-violet-200 dark:bg-violet-800"} rounded-lg`}><FontAwesomeIcon icon={faSignIn} /> Sign In</button>
-        <button onClick={() => setMode("signUp")} className={`p-2 text-lg ${mode === "signUp" ? "bg-violet-300 dark:bg-violet-600" : "bg-violet-200 dark:bg-violet-800"} rounded-lg`}><FontAwesomeIcon icon={faUserPlus} /> Sign Up</button>
+        <button onClick={() => setMode("signIn")} className={`p-2 text-lg hover:text-sky-500 ${mode === "signIn" ? "bg-violet-300 dark:bg-violet-600" : "bg-violet-200 dark:bg-violet-800"} rounded-lg`}><FontAwesomeIcon icon={faSignIn} /> Sign In</button>
+        <button onClick={() => setMode("signUp")} className={`p-2 text-lg hover:text-sky-500 ${mode === "signUp" ? "bg-violet-300 dark:bg-violet-600" : "bg-violet-200 dark:bg-violet-800"} rounded-lg`}><FontAwesomeIcon icon={faUserPlus} /> Sign Up</button>
       </div>
       {mode === "signIn" && <SignInForm email={email} setEmail={setEmail} password={password} setPassword={setPassword} />}
       {mode === "signUp" && <SignUpForm email={email} setEmail={setEmail} password={password} setPassword={setPassword} />}
@@ -56,7 +56,7 @@ function SignUpForm({ email, setEmail, password, setPassword }: AuthTypes) {
   }
   return (
     <form className="flex flex-col justify-center text-center gap-0.5" onSubmit={(e) => emailAuth(e)}>
-      <button type="button" onClick={async () => await authClient.signIn.social({ provider: "google" })}><FontAwesomeIcon icon={faGoogle} /> Sign up with Google</button>
+      <button type="button" onClick={async () => await authClient.signIn.social({ provider: "google" })} className="hover:text-sky-500 p-1 rounded-lg w-fit mx-auto bg-green-400 dark:bg-green-600"><FontAwesomeIcon icon={faGoogle} /> Sign up with Google</button>
       <label className="font-semibold flex justify-between w-64 mx-auto"><p>Name</p> <p className="text-red-400">*</p></label>
       <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="bg-slate-300 dark:bg-slate-800 w-64 p-1 rounded-lg mx-auto" />
       <label className="font-semibold flex justify-between w-64 mx-auto"><p>Email</p> <p className="text-red-400">*</p></label>
@@ -65,7 +65,7 @@ function SignUpForm({ email, setEmail, password, setPassword }: AuthTypes) {
       <input type="email" value={emailConf} onChange={(e) => setEmailConf(e.target.value)} className="bg-slate-300 dark:bg-slate-800 w-64 p-1 rounded-lg mx-auto" />
       <label className="font-semibold flex justify-between w-64 mx-auto"><p>Password</p> <p className="text-red-400">*</p></label>
       <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="bg-slate-300 dark:bg-slate-800 w-64 p-1 rounded-lg mx-auto" />
-      <button type="submit" className="bg-violet-500 rounded-xl p-2 w-fit mx-auto mt-3"><FontAwesomeIcon icon={faUserPlus} /> Sign Up</button>
+      <button type="submit" className="bg-violet-500 rounded-xl p-2 w-fit mx-auto mt-3 hover:text-sky-500"><FontAwesomeIcon icon={faUserPlus} /> Sign Up</button>
     </form>
   )
 }
@@ -88,12 +88,12 @@ function SignInForm({ email, setEmail, password, setPassword }: AuthTypes) {
   }
   return (
     <form className="flex flex-col justify-center text-center gap-0.5" onSubmit={(e) => emailAuth(e)}>
-      <button type="button" onClick={async () => await authClient.signIn.social({ provider: "google" })}><FontAwesomeIcon icon={faGoogle} /> Sign in with Google</button>
+      <button type="button" onClick={async () => await authClient.signIn.social({ provider: "google" })} className="hover:text-sky-500 p-1 rounded-lg w-fit mx-auto bg-green-400 dark:bg-green-600"><FontAwesomeIcon icon={faGoogle} /> Sign in with Google</button>
       <label className="font-semibold flex justify-between w-64 mx-auto"><p>Email</p> <p className="text-red-400">*</p></label>
       <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="bg-slate-300 dark:bg-slate-800 w-64 p-1 rounded-lg mx-auto" />
       <label className="font-semibold flex justify-between w-64 mx-auto"><p>Password</p> <p className="text-red-400">*</p></label>
       <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="bg-slate-300 dark:bg-slate-800 w-64 p-1 rounded-lg mx-auto" />
-      <button type="submit" className="bg-violet-500 rounded-xl p-2 w-fit mx-auto mt-3"><FontAwesomeIcon icon={faSignIn} /> Sign In</button>
+      <button type="submit" className="bg-violet-500 rounded-xl p-2 w-fit mx-auto mt-3 hover:text-sky-500"><FontAwesomeIcon icon={faSignIn} /> Sign In</button>
     </form>
   )
 }
