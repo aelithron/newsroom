@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import AuthForm from "./login.module";
+import { Metadata } from "next";
 
+export const metadata: Metadata = { title: "Sign In / Sign Up" }
 export default async function Page({ searchParams }: { searchParams: Promise<{ hint: string }> }) {
   return (
     <main className="flex flex-col min-h-screen p-8 md:px-20">
