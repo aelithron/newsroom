@@ -12,7 +12,7 @@ export const staffTable = pgTable("staff", {
   paperID: integer().references(() => paperTable.id, { onDelete: "cascade" }),
   userID: text().references(() => user.id, { onDelete: "cascade" })
 }, (t) => [primaryKey({ columns: [t.paperID, t.userID] })]);
-export const paperStaff = defineRelations({ staffTable, paperTable, user }, (r) => ({
+export const relations = defineRelations({ staffTable, paperTable, user }, (r) => ({
   paperTable: {
     staff: r.many.user({
       from: r.paperTable.id.through(r.staffTable.paperID),
