@@ -1,10 +1,7 @@
 import { auth } from "@/utils/auth";
 import { db } from "@/utils/db";
-import { user } from "@/utils/schema/auth";
-import { staffTable } from "@/utils/schema/main";
 import { faNewspaper } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { eq } from "drizzle-orm";
 import { Metadata } from "next";
 import { headers } from "next/headers";
 import { Suspense } from "react";
@@ -22,12 +19,12 @@ export default function Page() {
 async function Papers() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return null;
-  const papers = await db.select().from(staffTable).where(eq(staffTable.userID, session.user.id));
-  //const memberships = await db.query.user.findFirst({ where: eq(user.id, session.user.id), with: { papers: true } });
+  const userInfo = await db.query.user.findFirst({ where: { id: session.user.id }, with: { papers: true } });
+  if (!userInfo) return null;
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-      {papers.map((paper) => <div key={paper.paperID} className="flex flex-col bg-slate-200 dark:bg-slate-800 p-2 rounded-lg">
-        {paper.paperID}
+      {userInfo.papers.map((paper) => <div key={paper.id} className="flex flex-col bg-slate-200 dark:bg-slate-800 p-2 rounded-lg">
+        {paper.name}
       </div>)}
     </div>
   );

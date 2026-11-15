@@ -4,4 +4,4 @@ import * as main from "./schema/main";
 import * as auth from "./schema/auth";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-export const db = drizzle({ client: pool, relations: { ...main.relations, ...auth.authRelations } });
+export const db = drizzle({ client: pool, relations: { ...auth.authRelations, ...main.relations } });
