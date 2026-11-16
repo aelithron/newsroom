@@ -9,8 +9,8 @@ export const paperTable = pgTable("papers", {
 });
 
 export const staffTable = pgTable("staff", {
-  paperID: integer().references(() => paperTable.id, { onDelete: "cascade" }),
-  userID: text().references(() => user.id, { onDelete: "cascade" })
+  paperID: integer("paper_id").references(() => paperTable.id, { onDelete: "cascade" }),
+  userID: text("user_id").references(() => user.id, { onDelete: "cascade" })
 }, (t) => [primaryKey({ columns: [t.paperID, t.userID] })]);
 
 export const relations = defineRelationsPart({ staffTable, paperTable, user }, (r) => ({
@@ -30,6 +30,7 @@ export const relations = defineRelationsPart({ staffTable, paperTable, user }, (
 
 export const interviewTable = pgTable("interviews", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  paperID: integer("paper_id").notNull().references(() => paperTable.id, { onDelete: "cascade" }),
   name: text(),
   body: text().notNull(),
   comments: json().$type<InterviewComment>().array()
