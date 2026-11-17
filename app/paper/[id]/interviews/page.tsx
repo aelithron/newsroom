@@ -26,6 +26,9 @@ async function PaperInterviews({ params }: { params: Promise<{ id: string }> }) 
         <h2 className="text-xl pl-1">-</h2>
         <h2 className="text-xl italic">{paper.name}</h2>
       </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {}    
+      </div>
     </div>
   );
 }
