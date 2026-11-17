@@ -1,5 +1,4 @@
-import { integer, text, pgTable, json, primaryKey } from "drizzle-orm/pg-core";
-import type { InterviewComment } from "@/types/interviews";
+import { integer, text, pgTable, primaryKey } from "drizzle-orm/pg-core";
 import { user } from "./auth";
 import { defineRelationsPart } from "drizzle-orm";
 
@@ -13,12 +12,18 @@ export const staffTable = pgTable("staff", {
   userID: text("user_id").references(() => user.id, { onDelete: "cascade" })
 }, (t) => [primaryKey({ columns: [t.paperID, t.userID] })]);
 
+export const interviewQuestionTable = pgTable("interview_questions", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  paperID: integer("paper_id").notNull().references(() => paperTable.id, { onDelete: "cascade" }),
+  question: text().notNull()
+});
+
 export const interviewTable = pgTable("interviews", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   paperID: integer("paper_id").notNull().references(() => paperTable.id, { onDelete: "cascade" }),
+  questionID: integer("question_id").notNull().references(() => interviewQuestionTable.id, { onDelete: "set default" }),
   name: text(),
-  body: text().notNull(),
-  comments: json().$type<InterviewComment>().array()
+  body: text().notNull()
 });
 
 export const relations = defineRelationsPart({ staffTable, paperTable, interviewTable, user }, (r) => ({
