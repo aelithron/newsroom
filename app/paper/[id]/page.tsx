@@ -2,7 +2,7 @@ import { BackButton, PaperNotFound } from "@/app/ui.module";
 import { auth } from "@/utils/auth";
 import { db } from "@/utils/db";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { faAngleRight, faMicrophoneAlt, faNewspaper } from "@fortawesome/free-solid-svg-icons";
+import { faAngleRight, faMicrophone, faNewspaper } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { headers } from "next/headers";
 import Link from "next/link";
@@ -20,7 +20,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 }
 async function PaperHome({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) return null;
+  if (!session) return (<PaperNotFound />);
   const paper = await db.query.paperTable.findFirst({ where: { id: parseInt((await params).id) }, with: { staff: true } });
   if (!paper || !paper.staff.find((a) => a.id === session.user.id)) return (<PaperNotFound />);
   return (
@@ -28,7 +28,7 @@ async function PaperHome({ params }: { params: Promise<{ id: string }> }) {
       <h1 className="font-semibold text-2xl"><FontAwesomeIcon icon={faNewspaper} /> {paper.name}</h1>
       <h2>Welcome, {session.user.name}!</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <MenuCard link={`/paper/${(await params).id}/interviews`} icon={faMicrophoneAlt} title="Interviews" desc="See and add interviews!" />
+        <MenuCard link={`/paper/${(await params).id}/interviews`} icon={faMicrophone} title="Interviews" desc="See and add interviews!" />
       </div>
     </div>
   );

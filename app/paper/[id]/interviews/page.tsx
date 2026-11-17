@@ -1,9 +1,10 @@
 import { BackButton, PaperNotFound } from "@/app/ui.module";
 import { auth } from "@/utils/auth";
 import { db } from "@/utils/db";
-import { faMicrophone } from "@fortawesome/free-solid-svg-icons";
+import { faMicrophone, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { headers } from "next/headers";
+import Link from "next/link";
 import { Suspense } from "react";
 
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
@@ -15,8 +16,8 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 }
 async function PaperInterviews({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) return null;
-  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt((await params).id) }, with: { staff: true } });
+  if (!session) return (<PaperNotFound />);
+  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt((await params).id) }, with: { staff: true, interviews: true } });
   if (!paper || !paper.staff.find((a) => a.id === session.user.id)) return (<PaperNotFound />);
   return (
     <div className="flex flex-col gap-2">
@@ -26,8 +27,15 @@ async function PaperInterviews({ params }: { params: Promise<{ id: string }> }) 
         <h2 className="text-xl pl-1">-</h2>
         <h2 className="text-xl italic">{paper.name}</h2>
       </div>
+      <Link href={`/paper/${(await params).id}/interviews/create`} className="bg-violet-300 dark:bg-violet-800 p-1 rounded-lg hover:text-sky-500 w-fit"><FontAwesomeIcon icon={faPlus} /> Add Interview</Link>
+      {paper.interviews.length < 1 && <div className="flex flex-col gap-1 mt-2 text-lg">
+        <p>This paper doesn&apos;t have any interviews yet!</p>
+        <p>Add one with the button above, or ask another team member to.</p>
+      </div>}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {}    
+        {paper.interviews.map((interview) => <div key={interview.id} className="flex flex-col p-2 bg-slate-300 dark:bg-slate-800 rounded-lg">
+          {interview.name}
+        </div>)}        
       </div>
     </div>
   );
