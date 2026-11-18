@@ -52,5 +52,11 @@ export const relations = defineRelationsPart({ staffTable, paperTable, interview
       from: r.interviewTable.paperID,
       to: r.paperTable.id
     })
+  },
+  interviewQuestionTable: {
+    paper: r.one.paperTable({
+      from: r.interviewQuestionTable.paperID,
+      to: r.paperTable.id
+    })
   }
 }));
