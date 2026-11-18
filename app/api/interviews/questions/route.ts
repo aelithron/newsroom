@@ -1,6 +1,6 @@
 import { auth } from "@/utils/auth";
 import { db } from "@/utils/db";
-import { interviewQuestionTable, paperTable, staffTable } from "@/utils/schema/main";
+import { interviewQuestionTable } from "@/utils/schema/main";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {

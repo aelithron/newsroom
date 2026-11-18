@@ -1,4 +1,4 @@
-import { integer, text, pgTable, primaryKey } from "drizzle-orm/pg-core";
+import { integer, text, jsonb, pgTable, primaryKey, boolean } from "drizzle-orm/pg-core";
 import { user } from "./auth";
 import { defineRelationsPart } from "drizzle-orm";
 
@@ -15,18 +15,18 @@ export const staffTable = pgTable("staff", {
 export const interviewQuestionTable = pgTable("interview_questions", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   paperID: integer("paper_id").notNull().references(() => paperTable.id, { onDelete: "cascade" }),
-  question: text().notNull()
+  question: text().notNull(),
+  enabled: boolean().notNull().default(true)
 });
 
 export const interviewTable = pgTable("interviews", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   paperID: integer("paper_id").notNull().references(() => paperTable.id, { onDelete: "cascade" }),
-  questionID: integer("question_id").notNull().default(0).references(() => interviewQuestionTable.id, { onDelete: "set default" }),
   name: text(),
-  body: text().notNull()
+  responses: jsonb().notNull().$type<{ q: number, a: string }[]>()
 });
 
-export const relations = defineRelationsPart({ staffTable, paperTable, interviewTable, user }, (r) => ({
+export const relations = defineRelationsPart({ staffTable, paperTable, interviewTable, interviewQuestionTable, user }, (r) => ({
   paperTable: {
     staff: r.many.user({
       from: r.paperTable.id.through(r.staffTable.paperID),
@@ -35,6 +35,10 @@ export const relations = defineRelationsPart({ staffTable, paperTable, interview
     interviews: r.many.interviewTable({
       from: r.paperTable.id,
       to: r.interviewTable.paperID
+    }),
+    questions: r.many.interviewQuestionTable({
+      from: r.paperTable.id,
+      to: r.interviewQuestionTable.paperID
     })
   },
   user: {
