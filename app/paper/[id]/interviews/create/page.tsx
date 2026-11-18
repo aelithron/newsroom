@@ -6,6 +6,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { headers } from "next/headers";
 import { Suspense } from "react";
 import CreateInterviewForm from "./create.module";
+import { interviewQuestionTable } from "@/utils/schema/main";
+import { eq } from "drizzle-orm";
 
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
   return (
@@ -15,9 +17,10 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   )
 }
 async function CreateInterviewPage({ params }: { params: Promise<{ id: string }> }) {
-const session = await auth.api.getSession({ headers: await headers() });
+  const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return (<PaperNotFound />);
   const paper = await db.query.paperTable.findFirst({ where: { id: parseInt((await params).id) }, with: { staff: true, interviews: true } });
+  const questions = await db.select().from(interviewQuestionTable).where(eq(interviewQuestionTable.paperID, parseInt((await params).id)));
   if (!paper || !paper.staff.find((a) => a.id === session.user.id)) return (<PaperNotFound />);
   return (
     <div className="flex flex-col gap-2">
@@ -27,7 +30,7 @@ const session = await auth.api.getSession({ headers: await headers() });
         <h2 className="text-xl pl-1">-</h2>
         <h2 className="text-xl italic">{paper.name}</h2>
       </div>
-      <CreateInterviewForm paperID={(await params).id} />
+      <CreateInterviewForm paperID={(await params).id} questions={questions.map((q) => { return { id: q.id, text: q.question } })} />
     </div>
   );
 }

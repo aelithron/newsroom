@@ -36,9 +36,9 @@ async function Papers() {
   }
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mt-4">
-      {userInfo.papers.map((paper) => <div key={paper.id} className="flex flex-col bg-slate-200 dark:bg-slate-800 p-2 rounded-lg">
-        <Link href={`/paper/${paper.id}`} className="hover:text-sky-500 font-semibold text-lg"><FontAwesomeIcon icon={faNewspaper} /> {paper.name}</Link>
-      </div>)}
+      {userInfo.papers.map((paper) => <Link key={paper.id} href={`/paper/${paper.id}`} className="flex flex-col bg-slate-200 dark:bg-slate-800 p-2 rounded-lg">
+        <h1 className="hover:text-sky-500 font-semibold text-lg"><FontAwesomeIcon icon={faNewspaper} /> {paper.name}</h1>
+      </Link>)}
     </div>
   );
 }

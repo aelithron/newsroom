@@ -21,7 +21,7 @@ export const interviewQuestionTable = pgTable("interview_questions", {
 export const interviewTable = pgTable("interviews", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   paperID: integer("paper_id").notNull().references(() => paperTable.id, { onDelete: "cascade" }),
-  questionID: integer("question_id").notNull().references(() => interviewQuestionTable.id, { onDelete: "set default" }),
+  questionID: integer("question_id").notNull().default(0).references(() => interviewQuestionTable.id, { onDelete: "set default" }),
   name: text(),
   body: text().notNull()
 });
