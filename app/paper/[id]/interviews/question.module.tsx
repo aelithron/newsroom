@@ -1,11 +1,13 @@
 "use client";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faPencil, faPlus, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState, type SubmitEvent } from "react";
+import { useState, type SubmitEvent, type Dispatch, type SetStateAction } from "react";
 
 export default function CreateQuestions({ paperID, initQuestions }: { paperID: number, initQuestions: { id: number, text: string, enabled: boolean }[] }) {
   const [allQuestions, setAllQuestions] = useState<{ id: number, text: string, enabled: boolean }[]>(initQuestions);
   const [question, setQuestion] = useState<string>("");
+  const [showDisabled, setShowDisabled] = useState<boolean>(false);
+  const [editedID, setEditedID] = useState<number | null>(null);
   async function handleSubmit(e: SubmitEvent) {
     e.preventDefault();
     if (!question) {
@@ -41,14 +43,50 @@ export default function CreateQuestions({ paperID, initQuestions }: { paperID: n
         </div>
         <button type="submit" className="bg-violet-300 dark:bg-violet-800 p-2 rounded-lg hover:text-sky-500 h-fit my-auto"><FontAwesomeIcon icon={faPlus} /></button>
       </form>
-      <h2 className="text-xl font-semibold">Questions:</h2>
-      {allQuestions.map((question) => <div key={question.id}>
-        {question.text}
+      <div className="flex gap-4">
+        <h2 className="text-xl font-semibold">Questions</h2>
+        <div className="flex gap-2 bg-slate-300 dark:bg-slate-800 rounded-lg px-2 py-1 items-center">
+          <input type="checkbox" checked={showDisabled} onChange={(e) => setShowDisabled(e.target.checked)} />
+          <label className="text-sm">Show Disabled</label>
+        </div>
+      </div>
+      {(!showDisabled ? allQuestions.filter((q) => q.enabled) : allQuestions).sort((a, b) => a.id - b.id).map((question) => <div key={question.id}>
+        {editedID !== question.id && <div className="flex gap-2 items-center">
+          <p>{question.text}</p>
+          <button onClick={() => setEditedID(question.id)} className="bg-violet-300 dark:bg-violet-800 p-1 rounded-lg hover:text-sky-500"><FontAwesomeIcon icon={faPencil} /></button>
+        </div>}
+        {editedID === question.id && <EditQuestion id={question.id} origText={question.text} origEnabled={question.enabled} allQuestions={allQuestions} setAllQuestions={setAllQuestions} setEditedID={setEditedID} />}
       </div>)}
       {allQuestions.length < 1 && <div className="flex flex-col gap-1">
         <p>No questions yet!</p>
         <p>Add one with the box above.</p>
       </div>}
     </div>
+  )
+}
+
+function EditQuestion({ id, origText, origEnabled, allQuestions, setAllQuestions, setEditedID }: { id: number, origText: string, origEnabled: boolean, allQuestions: { id: number, text: string, enabled: boolean }[], setAllQuestions: Dispatch<SetStateAction<{ id: number, text: string, enabled: boolean }[]>>, setEditedID: Dispatch<SetStateAction<number | null>> }) {
+  const [text, setText] = useState<string>(origText);
+  const [enabled, setEnabled] = useState<boolean>(origEnabled);
+  async function handleSubmit(e: SubmitEvent) {
+    e.preventDefault();
+    setEditedID(null);
+  }
+  async function handleDelete() {
+    setAllQuestions([...allQuestions].filter((q) => q.id !== id));
+    setEditedID(null);
+  }
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+      <input value={text} onChange={(e) => setText(e.target.value)} className="bg-slate-300 dark:bg-slate-800 p-2 rounded-lg w-81" />
+      <div className="flex gap-3">
+        <div className="flex gap-2 items-center bg-slate-300 dark:bg-slate-800 py-1 px-2 rounded-lg">
+          <label className="text-sm">Enabled?</label>
+          <input type="checkbox" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />
+        </div>
+        <button type="submit" className="bg-violet-300 dark:bg-violet-800 p-1 rounded-lg hover:text-sky-500"><FontAwesomeIcon icon={faSave} /> Save</button>
+        <button type="button" onClick={handleDelete} className="bg-red-300 dark:bg-red-500 p-1 rounded-lg hover:text-sky-500"><FontAwesomeIcon icon={faTrash} /> Delete</button>
+      </div>
+    </form>
   )
 }
