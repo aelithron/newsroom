@@ -50,7 +50,7 @@ export default function CreateQuestions({ paperID, initQuestions }: { paperID: n
           <label className="text-sm">Show Disabled</label>
         </div>
       </div>
-      {(!showDisabled ? allQuestions.filter((q) => q.enabled) : allQuestions).sort((a, b) => a.id - b.id).map((question) => <div key={question.id}>
+      {(!showDisabled ? allQuestions.filter((q) => q.enabled) : allQuestions).sort((a, b) => b.id - a.id).map((question) => <div key={question.id}>
         {editedID !== question.id && <div className="flex gap-2 items-center">
           <p>{question.text}</p>
           <button onClick={() => setEditedID(question.id)} className="bg-violet-300 dark:bg-violet-800 p-1 rounded-lg hover:text-sky-500"><FontAwesomeIcon icon={faPencil} /></button>
@@ -98,8 +98,21 @@ function EditQuestion({ id, paperID, origText, origEnabled, allQuestions, setAll
     setEditedID(null);
   }
   async function handleDelete() {
-    const ask = confirm(`Are you sure you want to delete this question?\nQuestion: ${origText}`);
+    const ask = confirm(`Are you sure you want to delete this question?\nThis will cause it to become "Unknown Question" in previous interviews, and should generally be avoided.\n\nQuestion: ${origText}`);
     if (!ask) return;
+    let body;
+    try {
+      const res = await fetch("/api/interviews/questions", { method: "DELETE", body: JSON.stringify({ paperID, questionID: id }) });
+      body = await res.json();
+    } catch (e) {
+      console.error(`Error deleting question!\n${e}`);
+      alert(`Error deleting question: unknown (check browser console)`);
+      return;
+    }
+    if (body.error) {
+      alert(`Error deleting question: ${body.message} (${body.error})`);
+      return;
+    }
     setAllQuestions([...allQuestions].filter((q) => q.id !== id));
     setEditedID(null);
   }

@@ -32,7 +32,7 @@ async function CreateInterviewPage({ params }: { params: Promise<{ id: string }>
         <p>You don&apos;t have any questions added yet!</p>
         <p>Add one on the <Link href={`/paper/${(await params).id}/interviews`} className="underline hover:text-sky-500">interviews page</Link> first.</p>
       </div>}
-      {paper.questions.length >= 1 && <CreateInterviewForm paperID={(await params).id} questions={paper.questions.map((q) => { return { id: q.id, text: q.question } })} />}
+      {paper.questions.length >= 1 && <CreateInterviewForm paperID={(await params).id} questions={paper.questions.map((q) => { return { id: q.id, text: q.question, enabled: q.enabled } })} />}
     </div>
   );
 }

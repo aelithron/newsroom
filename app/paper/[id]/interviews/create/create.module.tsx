@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/navigation";
 import { useState, type SubmitEvent } from "react";
 
-export default function CreateInterviewForm({ paperID, questions }: { paperID: string, questions: { id: number, text: string }[] }) {
+export default function CreateInterviewForm({ paperID, questions }: { paperID: string, questions: { id: number, text: string, enabled: boolean }[] }) {
   const router = useRouter();
   const [name, setName] = useState<string>("");
   const [responses, setResponses] = useState<{ id: number, answer: string }[]>([]);
@@ -42,8 +42,14 @@ export default function CreateInterviewForm({ paperID, questions }: { paperID: s
     }
     router.push(`/paper/${paperID}/interviews/${body.id}`);
   }
+  function isDisplayable(question: { id: number, enabled: boolean }) {
+    const usedIDs: number[] = [];
+    for (const res of responses) usedIDs.push(res.id);
+    if (usedIDs.includes(question.id)) return false;
+    return question.enabled;
+  }
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
       <div>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-1">
@@ -56,7 +62,7 @@ export default function CreateInterviewForm({ paperID, questions }: { paperID: s
               <label className="font-semibold flex justify-between w-81"><p>Question</p> <p className="text-red-400">*</p></label>
               <select className="bg-slate-300 dark:bg-slate-800 w-81 p-1 rounded-lg" value={questionID.toString()} onChange={(e) => setQuestionID(parseInt(e.target.value))}>
                 <option disabled={true} value={0}>-- Select a question --</option>
-                {questions.map((q) => <option key={q.id} value={q.id}>{q.text}</option>)}
+                {questions.filter((q) => isDisplayable(q)).sort((a, b) => b.id - a.id).map((q) => <option key={q.id} value={q.id}>{q.text}</option>)}
               </select>
             </div>
             <div className="flex flex-col gap-1">
@@ -73,7 +79,7 @@ export default function CreateInterviewForm({ paperID, questions }: { paperID: s
           <p>No responses have been added yet.</p>
           <p>Add some using the form!</p>
         </div>}
-        {responses.length >= 1 && <div className="grid grid-cols-1 lg:grid-cols-2">
+        {responses.length >= 1 && <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {responses.map((response) => <div key={response.id} className="flex flex-col bg-slate-300 dark:bg-slate-800 p-2 rounded-xl">
             <h2 className="text-lg font-semibold">{(questions.find((q) => q.id === response.id) || { text: "Unknown Question" }).text}</h2>
             <p>{response.answer}</p>

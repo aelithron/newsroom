@@ -18,7 +18,8 @@ async function ViewInterview({ params }: { params: Promise<{ id: string, resID: 
   if (!session) return (<PaperNotFound />);
   const paper = await db.query.paperTable.findFirst({ where: { id: parseInt((await params).id) }, with: { staff: true, interviews: true, questions: true } });
   if (!paper || !paper.staff.find((a) => a.id === session.user.id)) return (<PaperNotFound />);
-  const interview = paper.interviews.find(async (res) => res.id === parseInt((await params).resID));
+  const resID = parseInt((await params).resID);
+  const interview = paper.interviews.find((res) => res.id === resID);
   if (!interview) return (<div></div>);
   return (
     <div className="flex flex-col gap-2">

@@ -23,7 +23,7 @@ async function PaperInterviews({ params }: { params: Promise<{ id: string }> }) 
   return (
     <div className="flex flex-col gap-2">
       <BackButton link={`/paper/${(await params).id}`} />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 flex flex-col gap-2">
           <div className="flex gap-1 align-middle items-center">
             <h1 className="font-semibold text-2xl"><FontAwesomeIcon icon={faMicrophone} /> Interviews</h1>
