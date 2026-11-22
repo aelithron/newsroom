@@ -1,0 +1,37 @@
+import { BackButton, Loader, PaperNotFound } from "@/app/ui.module";
+import { auth } from "@/utils/auth";
+import { db } from "@/utils/db";
+import { faMicrophone } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { headers } from "next/headers";
+import { Suspense } from "react";
+
+export default function Page({ params }: { params: Promise<{ id: string, resID: string }> }) {
+  return (
+    <main className="flex flex-col min-h-screen p-8 md:px-20">
+      <Suspense fallback={<Loader>Interview</Loader>}><ViewInterview params={params} /></Suspense>
+    </main>
+  )
+}
+async function ViewInterview({ params }: { params: Promise<{ id: string, resID: string }> }) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) return (<PaperNotFound />);
+  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt((await params).id) }, with: { staff: true, interviews: true, questions: true } });
+  if (!paper || !paper.staff.find((a) => a.id === session.user.id)) return (<PaperNotFound />);
+  const interview = paper.interviews.find(async (res) => res.id === parseInt((await params).resID));
+  if (!interview) return (<div></div>);
+  return (
+    <div className="flex flex-col gap-2">
+      <BackButton link={`/paper/${(await params).id}/interviews`} />
+      <div className="flex gap-1 align-middle items-center">
+        <h1 className="font-semibold text-2xl"><FontAwesomeIcon icon={faMicrophone} /> Interview with {interview.name || "Unknown"}</h1>
+        <h2 className="text-xl pl-1">-</h2>
+        <h2 className="text-xl italic">{paper.name}</h2>
+      </div>
+      {interview.responses.map((response) => <div key={response.q} className="bg-slate-300 dark:bg-slate-800 p-2 rounded-lg flex flex-col w-fit">
+        <h2 className="text-lg font-semibold">{(paper.questions.find(((question) => question.id === response.q)) || { question: "Unknown Question" }).question}</h2>
+        <p>{response.a}</p>
+      </div>)}
+    </div>
+  );
+}

@@ -36,10 +36,10 @@ async function PaperInterviews({ params }: { params: Promise<{ id: string }> }) 
             <p>Add one with the button above, or ask another team member to.</p>
           </div>}
           {paper.interviews.length >= 1 && <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {paper.interviews.map((interview) => <div key={interview.id} className="flex flex-col p-2 bg-slate-300 dark:bg-slate-800 rounded-lg">
-              <h2 className="font-semibold text-lg">{interview.name}</h2>
+            {paper.interviews.map((interview) => <Link key={interview.id} href={`/paper/${paper.id}/interviews/${interview.id}`} className="flex flex-col p-2 bg-slate-300 dark:bg-slate-800 rounded-lg">
+              <h2 className="font-semibold text-lg hover:text-sky-500 w-fit">{interview.name || "Unknown"}</h2>
               <p>Responses: {interview.responses.length}</p>
-            </div>)}
+            </Link>)}
           </div>}
         </div>
         <CreateQuestions paperID={parseInt((await params).id)} initQuestions={paper.questions.map((question) => { return { id: question.id, text: question.question, enabled: question.enabled } })} />

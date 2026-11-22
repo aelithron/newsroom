@@ -6,8 +6,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { headers } from "next/headers";
 import { Suspense } from "react";
 import CreateInterviewForm from "./create.module";
-import { interviewQuestionTable } from "@/utils/schema/main";
-import { eq } from "drizzle-orm";
 import Link from "next/link";
 
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
@@ -20,8 +18,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 async function CreateInterviewPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return (<PaperNotFound />);
-  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt((await params).id) }, with: { staff: true, interviews: true } });
-  const questions = await db.select().from(interviewQuestionTable).where(eq(interviewQuestionTable.paperID, parseInt((await params).id)));
+  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt((await params).id) }, with: { staff: true, interviews: true, questions: true } });
   if (!paper || !paper.staff.find((a) => a.id === session.user.id)) return (<PaperNotFound />);
   return (
     <div className="flex flex-col gap-2">
@@ -31,11 +28,11 @@ async function CreateInterviewPage({ params }: { params: Promise<{ id: string }>
         <h2 className="text-xl pl-1">-</h2>
         <h2 className="text-xl italic">{paper.name}</h2>
       </div>
-      {questions.length < 1 && <div className="flex flex-col gap-1 text-lg mt-2">
+      {paper.questions.length < 1 && <div className="flex flex-col gap-1 text-lg mt-2">
         <p>You don&apos;t have any questions added yet!</p>
         <p>Add one on the <Link href={`/paper/${(await params).id}/interviews`} className="underline hover:text-sky-500">interviews page</Link> first.</p>
       </div>}
-      {questions.length >= 1 && <CreateInterviewForm paperID={(await params).id} questions={questions.map((q) => { return { id: q.id, text: q.question } })} />}
+      {paper.questions.length >= 1 && <CreateInterviewForm paperID={(await params).id} questions={paper.questions.map((q) => { return { id: q.id, text: q.question } })} />}
     </div>
   );
 }

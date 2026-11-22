@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
   const responses: { q: number, a: string }[] = [];
   for (const item of body.responses) {
     if (!item.id || Number.isNaN(parseInt(item.id)) || !item.answer || (item.answer as string).trim().length < 1) return NextResponse.json({ error: "invalid_response_object", message: "At least one of your responses is malformed!" }, { status: 400 });
-    responses.push({ q: item.id, a: item.string });
+    responses.push({ q: item.id, a: item.answer });
   }
   if (!body.paperID || Number.isNaN(parseInt(body.paperID))) return NextResponse.json({ error: "invalid_paper", message: "Your paper ID is missing/invalid!" }, { status: 400 });
   const paper = await db.query.paperTable.findFirst({ where: { id: parseInt(body.paperID) }, with: { staff: true, questions: true } });

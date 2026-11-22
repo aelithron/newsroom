@@ -8,6 +8,10 @@ export default function CreateQuestions({ paperID, initQuestions }: { paperID: n
   const [question, setQuestion] = useState<string>("");
   async function handleSubmit(e: SubmitEvent) {
     e.preventDefault();
+    if (!question) {
+      alert("No question was entered, please provide one!");
+      return;
+    }
     let id;
     try {
       const res = await fetch("/api/interviews/questions", { method: "POST", body: JSON.stringify({ paperID, question }) });
