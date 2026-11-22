@@ -34,9 +34,9 @@ export default function CreateQuestions({ paperID, initQuestions }: { paperID: n
     setQuestion("");
   }
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2">
       <h2 className="text-xl font-semibold">New Question:</h2>
-      <form onSubmit={handleSubmit} className="flex gap-4">
+      <form onSubmit={handleSubmit} className="flex gap-4 mb-2">
         <div className="flex flex-col gap-1">
           <label className="font-semibold flex justify-between w-81"><p>Question</p> <p className="text-red-400">*</p></label>
           <input className="bg-slate-300 dark:bg-slate-800 w-81 p-1 rounded-lg" value={question} onChange={(e) => setQuestion(e.target.value)} />
@@ -55,24 +55,51 @@ export default function CreateQuestions({ paperID, initQuestions }: { paperID: n
           <p>{question.text}</p>
           <button onClick={() => setEditedID(question.id)} className="bg-violet-300 dark:bg-violet-800 p-1 rounded-lg hover:text-sky-500"><FontAwesomeIcon icon={faPencil} /></button>
         </div>}
-        {editedID === question.id && <EditQuestion id={question.id} origText={question.text} origEnabled={question.enabled} allQuestions={allQuestions} setAllQuestions={setAllQuestions} setEditedID={setEditedID} />}
+        {editedID === question.id && <EditQuestion id={question.id} paperID={paperID} origText={question.text} origEnabled={question.enabled} allQuestions={allQuestions} setAllQuestions={setAllQuestions} setEditedID={setEditedID} />}
       </div>)}
-      {allQuestions.length < 1 && <div className="flex flex-col gap-1">
+      {(!showDisabled ? allQuestions.filter((q) => q.enabled) : allQuestions).length < 1 && <div className="flex flex-col gap-1">
         <p>No questions yet!</p>
-        <p>Add one with the box above.</p>
+        <p>Add one using the box above.</p>
+        {(!showDisabled && allQuestions.length >= 1) && <p>Some of your questions are hidden, check &quot;Show Disabled&quot; to see them.</p>}
       </div>}
     </div>
   )
 }
 
-function EditQuestion({ id, origText, origEnabled, allQuestions, setAllQuestions, setEditedID }: { id: number, origText: string, origEnabled: boolean, allQuestions: { id: number, text: string, enabled: boolean }[], setAllQuestions: Dispatch<SetStateAction<{ id: number, text: string, enabled: boolean }[]>>, setEditedID: Dispatch<SetStateAction<number | null>> }) {
+function EditQuestion({ id, paperID, origText, origEnabled, allQuestions, setAllQuestions, setEditedID }: { id: number, paperID: number, origText: string, origEnabled: boolean, allQuestions: { id: number, text: string, enabled: boolean }[], setAllQuestions: Dispatch<SetStateAction<{ id: number, text: string, enabled: boolean }[]>>, setEditedID: Dispatch<SetStateAction<number | null>> }) {
   const [text, setText] = useState<string>(origText);
   const [enabled, setEnabled] = useState<boolean>(origEnabled);
   async function handleSubmit(e: SubmitEvent) {
     e.preventDefault();
+    if (origText.trim() === text.trim() && origEnabled === enabled) {
+      setEditedID(null);
+      return;
+    }
+    let body;
+    try {
+      const res = await fetch("/api/interviews/questions", { method: "PATCH", body: JSON.stringify({ paperID, questionID: id, question: (origText.trim() !== text.trim() ? text : undefined), enabled: (origEnabled !== enabled ? enabled : undefined) }) });
+      body = await res.json();
+    } catch (e) {
+      console.error(`Error editing question!\n${e}`);
+      alert(`Error editing question: unknown (check browser console)`);
+      return;
+    }
+    if (body.error) {
+      alert(`Error editing question: ${body.message} (${body.error})`);
+      return;
+    }
+    if (body.changeFlag) {
+      setEditedID(null);
+      return;
+    }
+    const original = [...allQuestions].filter((q) => q.id !== id);
+    original.push({ id, text, enabled });
+    setAllQuestions(original);
     setEditedID(null);
   }
   async function handleDelete() {
+    const ask = confirm(`Are you sure you want to delete this question?\nQuestion: ${origText}`);
+    if (!ask) return;
     setAllQuestions([...allQuestions].filter((q) => q.id !== id));
     setEditedID(null);
   }
