@@ -37,7 +37,8 @@ async function PaperInterviews({ params }: { params: Promise<{ id: string }> }) 
           </div>}
           {paper.interviews.length >= 1 && <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {paper.interviews.map((interview) => <div key={interview.id} className="flex flex-col p-2 bg-slate-300 dark:bg-slate-800 rounded-lg">
-              {interview.name}
+              <h2 className="font-semibold text-lg">{interview.name}</h2>
+              <p>Responses: {interview.responses.length}</p>
             </div>)}
           </div>}
         </div>

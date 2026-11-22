@@ -22,6 +22,10 @@ export default function CreatePaperForm() {
       alert(`Error creating your paper: unknown (check browser console)`);
       return;
     }
+    if (body.error) {
+      alert(`Error creating your paper: ${body.message} (${body.error})`)
+      return;
+    }
     router.push(`/paper/${body.id}`);
   }
   return (

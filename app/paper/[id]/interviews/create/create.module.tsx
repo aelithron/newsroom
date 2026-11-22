@@ -1,9 +1,11 @@
 "use client";
 import { faPlus, faSave } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRouter } from "next/navigation";
 import { useState, type SubmitEvent } from "react";
 
 export default function CreateInterviewForm({ paperID, questions }: { paperID: string, questions: { id: number, text: string }[] }) {
+  const router = useRouter();
   const [name, setName] = useState<string>("");
   const [responses, setResponses] = useState<{ id: number, answer: string }[]>([]);
   const [questionID, setQuestionID] = useState<number>(0);
@@ -25,7 +27,20 @@ export default function CreateInterviewForm({ paperID, questions }: { paperID: s
     setResponse("");
   }
   async function handleSubmit() {
-
+    let body;
+    try {
+      const res = await fetch("/api/interviews", { method: "POST", body: JSON.stringify({ paperID, name: name.length >= 1 ? name : undefined, responses }) });
+      body = await res.json();
+    } catch (e) {
+      console.error(`Error saving interview!\n${e}`);
+      alert(`Error saving interview: unknown (check browser console)`);
+      return;
+    }
+    if (body.error) {
+      alert(`Error saving interview: ${body.message} (${body.error})`);
+      return;
+    }
+    router.push(`/paper/${paperID}/interviews/${body.id}`);
   }
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
