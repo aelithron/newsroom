@@ -1,4 +1,4 @@
-import { BackButton, PaperNotFound } from "@/app/ui.module";
+import { BackButton, Loader, PaperNotFound } from "@/app/ui.module";
 import { auth } from "@/utils/auth";
 import { db } from "@/utils/db";
 import { faMicrophone, faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -11,7 +11,7 @@ import CreateQuestions from "./question.module";
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
   return (
     <main className="flex flex-col min-h-screen p-8 md:px-20">
-      <Suspense fallback={<p>Loading...</p>}><PaperInterviews params={params} /></Suspense>
+      <Suspense fallback={<Loader>Interviews</Loader>}><PaperInterviews params={params} /></Suspense>
     </main>
   )
 }

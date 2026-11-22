@@ -1,4 +1,4 @@
-import { BackButton, PaperNotFound } from "@/app/ui.module";
+import { BackButton, Loader, PaperNotFound } from "@/app/ui.module";
 import { auth } from "@/utils/auth";
 import { db } from "@/utils/db";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -12,7 +12,7 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   return (
     <main className="flex flex-col min-h-screen p-8 md:px-20">
       <BackButton link="/paper" className="mb-2" />
-      <Suspense fallback={<p>Loading...</p>}>
+      <Suspense fallback={<Loader>Paper</Loader>}>
         <PaperHome params={params} />
       </Suspense>
     </main>
