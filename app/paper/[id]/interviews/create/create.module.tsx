@@ -1,11 +1,11 @@
 "use client";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faSave } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState, type SubmitEvent } from "react";
 
 export default function CreateInterviewForm({ paperID, questions }: { paperID: string, questions: { id: number, text: string }[] }) {
   const [name, setName] = useState<string>("");
-  const [questionAnswers, setQuestionAnswers] = useState<{ id: number, answer: string }[]>([]);
+  const [responses, setResponses] = useState<{ id: number, answer: string }[]>([]);
   const [questionID, setQuestionID] = useState<number>(0);
   const [response, setResponse] = useState<string>("");
   async function handleAddAnswer(e: SubmitEvent) {
@@ -18,9 +18,9 @@ export default function CreateInterviewForm({ paperID, questions }: { paperID: s
       alert("Please enter a response first!");
       return;
     }
-    const base = [...questionAnswers];
+    const base = [...responses];
     base.push({ id: questionID, answer: response });
-    setQuestionAnswers(base);
+    setResponses(base);
     setQuestionID(0);
     setResponse("");
   }
@@ -28,28 +28,44 @@ export default function CreateInterviewForm({ paperID, questions }: { paperID: s
 
   }
   return (
-    <div>
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-1">
-          <label className="font-semibold w-81">Name</label>
-          <input className="bg-slate-300 dark:bg-slate-800 w-81 p-1 rounded-lg" value={name} onChange={(e) => setName(e.target.value)} />
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <div>
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-1">
+            <label className="font-semibold w-81">Name</label>
+            <input className="bg-slate-300 dark:bg-slate-800 w-81 p-1 rounded-lg" value={name} onChange={(e) => setName(e.target.value)} />
+          </div>
+          <form onSubmit={handleAddAnswer} className="flex flex-col gap-2">
+            <h2 className="font-semibold text-lg">Add Responses</h2>
+            <div className="flex flex-col gap-1">
+              <label className="font-semibold flex justify-between w-81"><p>Question</p> <p className="text-red-400">*</p></label>
+              <select className="bg-slate-300 dark:bg-slate-800 w-81 p-1 rounded-lg" value={questionID.toString()} onChange={(e) => setQuestionID(parseInt(e.target.value))}>
+                <option disabled={true} value={0}>-- Select a question --</option>
+                {questions.map((q) => <option key={q.id} value={q.id}>{q.text}</option>)}
+              </select>
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="font-semibold flex justify-between w-81"><p>Response</p> <p className="text-red-400">*</p></label>
+              <textarea rows={7} className="bg-slate-300 dark:bg-slate-800 w-81 p-1 rounded-lg" value={response} onChange={(e) => setResponse(e.target.value)} />
+            </div>
+            <button type="submit" className="bg-violet-300 dark:bg-violet-800 p-2 rounded-lg w-fit mt-1 hover:text-sky-500"><FontAwesomeIcon icon={faPlus} /> Add Response</button>
+          </form>
         </div>
-        <form onSubmit={handleAddAnswer} className="flex flex-col gap-2">
-          <h2 className="font-semibold text-lg">Add Responses</h2>
-          <div className="flex flex-col gap-1">
-            <label className="font-semibold flex justify-between w-81"><p>Question</p> <p className="text-red-400">*</p></label>
-            <select className="bg-slate-300 dark:bg-slate-800 w-81 p-1 rounded-lg" value={questionID.toString()} onChange={(e) => setQuestionID(parseInt(e.target.value))}>
-              <option disabled={true} value={0}>-- Select a question --</option>
-              {questions.map((q) => <option key={q.id} value={q.id}>{q.text}</option>)}
-            </select>
-          </div>
-          <div className="flex flex-col gap-1">
-            <label className="font-semibold flex justify-between w-81"><p>Response</p> <p className="text-red-400">*</p></label>
-            <textarea rows={7} className="bg-slate-300 dark:bg-slate-800 w-81 p-1 rounded-lg" value={response} onChange={(e) => setResponse(e.target.value)} />
-          </div>
-        </form>
-        <button type="button" onClick={handleSubmit} className="bg-violet-300 dark:bg-violet-800 p-2 rounded-lg w-fit"><FontAwesomeIcon icon={faPlus} /> Add Interview</button>
       </div>
+      <div className="flex flex-col gap-2 lg:col-span-2">
+        <h1 className="text-xl font-semibold">Responses</h1>
+        {responses.length < 1 && <div className="flex flex-col">
+          <p>No responses have been added yet.</p>
+          <p>Add some using the form!</p>
+        </div>}
+        {responses.length >= 1 && <div className="grid grid-cols-1 lg:grid-cols-2">
+          {responses.map((response) => <div key={response.id} className="flex flex-col bg-slate-300 dark:bg-slate-800 p-2 rounded-xl">
+            <h2 className="text-lg font-semibold">{(questions.find((q) => q.id === response.id) || { text: "Unknown Question" }).text}</h2>
+            <p>{response.answer}</p>
+          </div>)}
+        </div>}
+      </div>
+      <button type="button" onClick={handleSubmit} className="bg-slate-300 dark:bg-slate-800 p-2 rounded-lg w-fit hover:text-sky-500 mt-6"><FontAwesomeIcon icon={faSave} /> Save Interview</button>
     </div>
   )
 }

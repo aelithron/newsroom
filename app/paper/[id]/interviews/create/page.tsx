@@ -31,7 +31,6 @@ async function CreateInterviewPage({ params }: { params: Promise<{ id: string }>
         <h2 className="text-xl pl-1">-</h2>
         <h2 className="text-xl italic">{paper.name}</h2>
       </div>
-      <Loader>Interview Creator</Loader>
       {questions.length < 1 && <div className="flex flex-col gap-1 text-lg mt-2">
         <p>You don&apos;t have any questions added yet!</p>
         <p>Add one on the <Link href={`/paper/${(await params).id}/interviews`} className="underline hover:text-sky-500">interviews page</Link> first.</p>
