@@ -65,7 +65,7 @@ export default function CreateInterviewForm({ paperID, questions }: { paperID: s
             </div>
             <div className="flex flex-col gap-1">
               <label className="font-semibold flex justify-between w-81"><p>Response</p> <p className="text-red-400">*</p></label>
-              <textarea rows={7} className="bg-slate-300 dark:bg-slate-800 w-81 p-1 rounded-lg" value={response} onChange={(e) => setResponse(e.target.value)} />
+              <textarea rows={6} className="bg-slate-300 dark:bg-slate-800 w-81 p-1 rounded-lg" value={response} onChange={(e) => setResponse(e.target.value)} />
             </div>
             <button type="submit" className="bg-violet-300 dark:bg-violet-800 p-2 rounded-lg w-fit mt-1 hover:text-sky-500"><FontAwesomeIcon icon={faPlus} /> Add Response</button>
           </form>
@@ -78,7 +78,7 @@ export default function CreateInterviewForm({ paperID, questions }: { paperID: s
           <p>Add some using the form!</p>
         </div>}
         {responses.length >= 1 && <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-          {responses.map((response) => <div key={response.id} className="flex flex-col bg-slate-300 dark:bg-slate-800 p-2 rounded-xl">
+          {responses.sort((a, b) => b.id - a.id).map((response) => <div key={response.id} className="flex flex-col bg-slate-300 dark:bg-slate-800 p-2 rounded-xl">
             <h2 className="text-lg font-semibold mb-1">{(questions.find((q) => q.id === response.id) || { text: "Unknown Question" }).text}</h2>
             <ResponseEditor id={response.id} responses={responses} setResponses={setResponses} />
           </div>)}
@@ -103,6 +103,6 @@ export function ResponseEditor({ id, responses, setResponses } : { id: number, r
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [response]);
   return (
-    <textarea rows={7} className="bg-slate-300 dark:bg-slate-800 border-2 border-slate-400 dark:border-slate-900 w-full p-1 rounded-lg" value={response} onChange={(e) => setResponse(e.target.value)} />
+    <textarea rows={4} className="bg-slate-300 dark:bg-slate-800 border-2 border-slate-400 dark:border-slate-900 w-full p-1 rounded-lg" value={response} onChange={(e) => setResponse(e.target.value)} />
   )
 }

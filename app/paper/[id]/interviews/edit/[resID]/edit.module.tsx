@@ -35,18 +35,20 @@ export default function InterviewEditor({ interview, questions }: { interview: {
       return;
     }
     try {
-      const res = await fetch("/api/interviews", { method: "PATCH", body: JSON.stringify({ interviewID: interview.id, paperID: interview.paperID, name: name.length >= 1 ? name : undefined, responses }) });
+      let sentName: string | null = name;
+      if (name.trim().length < 1) sentName = null;
+      const res = await fetch("/api/interviews", { method: "PATCH", body: JSON.stringify({ interviewID: interview.id, paperID: interview.paperID, name: sentName !== interview.name ? sentName : undefined, responses }) });
       body = await res.json();
     } catch (e) {
-      console.error(`Error saving interview!\n${e}`);
-      alert(`Error saving interview: unknown (check browser console)`);
+      console.error(`Error editing interview!\n${e}`);
+      alert(`Error editing interview: unknown (check browser console)`);
       return;
     }
     if (body.error) {
-      alert(`Error saving interview: ${body.message} (${body.error})`);
+      alert(`Error editing interview: ${body.message} (${body.error})`);
       return;
     }
-    router.push(`/paper/${interview.paperID}/interviews/${body.id}`);
+    router.push(`/paper/${interview.paperID}/interviews/${interview.id}`);
   }
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -67,7 +69,7 @@ export default function InterviewEditor({ interview, questions }: { interview: {
             </div>
             <div className="flex flex-col gap-1">
               <label className="font-semibold flex justify-between w-81"><p>Response</p> <p className="text-red-400">*</p></label>
-              <textarea rows={7} className="bg-slate-300 dark:bg-slate-800 w-81 p-1 rounded-lg" value={response} onChange={(e) => setResponse(e.target.value)} />
+              <textarea rows={6} className="bg-slate-300 dark:bg-slate-800 w-81 p-1 rounded-lg" value={response} onChange={(e) => setResponse(e.target.value)} />
             </div>
             <button type="submit" className="bg-violet-300 dark:bg-violet-800 p-2 rounded-lg w-fit mt-1 hover:text-sky-500"><FontAwesomeIcon icon={faPlus} /> Add Response</button>
           </form>
@@ -80,7 +82,7 @@ export default function InterviewEditor({ interview, questions }: { interview: {
           <p>Add some using the form!</p>
         </div>}
         {responses.length >= 1 && <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-          {responses.map((response) => <div key={response.id} className="flex flex-col bg-slate-300 dark:bg-slate-800 p-2 rounded-xl">
+          {responses.sort((a, b) => b.id - a.id).map((response) => <div key={response.id} className="flex flex-col bg-slate-300 dark:bg-slate-800 p-2 rounded-xl">
             <h2 className="text-lg font-semibold mb-1">{(questions.find((q) => q.id === response.id) || { question: "Unknown Question" }).question}</h2>
             <ResponseEditor id={response.id} responses={responses} setResponses={setResponses} />
           </div>)}

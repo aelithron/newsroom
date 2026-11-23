@@ -1,9 +1,10 @@
 import { BackButton, Loader, PaperNotFound } from "@/app/ui.module";
 import { auth } from "@/utils/auth";
 import { db } from "@/utils/db";
-import { faMicrophone } from "@fortawesome/free-solid-svg-icons";
+import { faMicrophone, faPencil } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { headers } from "next/headers";
+import Link from "next/link";
 import { Suspense } from "react";
 
 export default function Page({ params }: { params: Promise<{ id: string, resID: string }> }) {
@@ -28,8 +29,9 @@ async function ViewInterview({ params }: { params: Promise<{ id: string, resID: 
         <h1 className="font-semibold text-2xl"><FontAwesomeIcon icon={faMicrophone} /> Interview with {interview.name || "Unknown"}</h1>
         <h2 className="text-xl pl-1">-</h2>
         <h2 className="text-xl italic">{paper.name}</h2>
+        <Link href={`/paper/${(await params).id}/interviews/edit/${(await params).resID}`} className="hover:text-sky-500 p-1 rounded-lg bg-violet-300 dark:bg-violet-800 ml-2"><FontAwesomeIcon icon={faPencil} /> Edit</Link>
       </div>
-      {interview.responses.map((response) => <div key={response.q} className="bg-slate-300 dark:bg-slate-800 p-2 rounded-lg flex flex-col w-fit">
+      {interview.responses.sort((a, b) => b.q - a.q).map((response) => <div key={response.q} className="bg-slate-300 dark:bg-slate-800 p-2 rounded-lg flex flex-col w-fit">
         <h2 className="text-lg font-semibold">{(paper.questions.find(((question) => question.id === response.q)) || { question: "Unknown Question" }).question}</h2>
         <p>{response.a}</p>
       </div>)}

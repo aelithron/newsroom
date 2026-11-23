@@ -30,13 +30,13 @@ async function PaperInterviews({ params }: { params: Promise<{ id: string }> }) 
             <h2 className="text-xl pl-1">-</h2>
             <h2 className="text-xl italic">{paper.name}</h2>
           </div>
-          <Link href={`/paper/${(await params).id}/interviews/create`} className="bg-violet-300 dark:bg-violet-800 p-1 rounded-lg hover:text-sky-500 w-fit"><FontAwesomeIcon icon={faPlus} /> Add Interview</Link>
+          <Link href={`/paper/${(await params).id}/interviews/create`} className="bg-violet-300 dark:bg-violet-800 p-1 rounded-lg hover:text-sky-500 w-fit mt-1 mb-2"><FontAwesomeIcon icon={faPlus} /> Add Interview</Link>
           {paper.interviews.length < 1 && <div className="flex flex-col gap-1 mt-2 text-lg lg:col-span-2">
             <p>This paper doesn&apos;t have any interviews yet!</p>
             <p>Add one with the button above, or ask another team member to.</p>
           </div>}
           {paper.interviews.length >= 1 && <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {paper.interviews.map((interview) => <Link key={interview.id} href={`/paper/${paper.id}/interviews/${interview.id}`} className="flex flex-col p-2 bg-slate-300 dark:bg-slate-800 rounded-lg">
+            {paper.interviews.sort((a, b) => b.id - a.id).map((interview) => <Link key={interview.id} href={`/paper/${paper.id}/interviews/${interview.id}`} className="flex flex-col p-2 bg-slate-300 dark:bg-slate-800 rounded-lg">
               <h2 className="font-semibold text-lg hover:text-sky-500 w-fit">{interview.name || "Unknown"}</h2>
               <p>Responses: {interview.responses.length}</p>
             </Link>)}
