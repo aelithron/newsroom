@@ -2,14 +2,14 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState, type SubmitEvent } from "react";
-import { isDisplayable } from "../../create/create.module";
+import { isDisplayable, ResponseEditor } from "../../create/create.module";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faSave } from "@fortawesome/free-solid-svg-icons";
 
 export default function InterviewEditor({ interview, questions }: { interview: { id: number, paperID: number, name: string | null, responses: { q: number, a: string }[] }, questions: { id: number, question: string, enabled: boolean }[] }) {
   const router = useRouter();
   const [name, setName] = useState<string>(interview.name || "");
-  const [responses, setResponses] = useState<{ q: number, a: string }[]>(interview.responses);
+  const [responses, setResponses] = useState<{ id: number, answer: string }[]>(interview.responses.map((res) => { return { id: res.q, answer: res.a } }));
   const [questionID, setQuestionID] = useState<number>(0);
   const [response, setResponse] = useState<string>("");
   async function handleAddAnswer(e: SubmitEvent) {
@@ -23,7 +23,7 @@ export default function InterviewEditor({ interview, questions }: { interview: {
       return;
     }
     const base = [...responses];
-    base.push({ q: questionID, a: response });
+    base.push({ id: questionID, answer: response });
     setResponses(base);
     setQuestionID(0);
     setResponse("");
@@ -35,7 +35,7 @@ export default function InterviewEditor({ interview, questions }: { interview: {
       return;
     }
     try {
-      const res = await fetch("/api/interviews", { method: "PATCH", body: JSON.stringify({ interviewID: interview.id, paperID: interview.paperID, name: name.length >= 1 ? name : undefined, responses: responses.map((res) => { return { question: res.q, answer: res.a } }) }) });
+      const res = await fetch("/api/interviews", { method: "PATCH", body: JSON.stringify({ interviewID: interview.id, paperID: interview.paperID, name: name.length >= 1 ? name : undefined, responses }) });
       body = await res.json();
     } catch (e) {
       console.error(`Error saving interview!\n${e}`);
@@ -62,7 +62,7 @@ export default function InterviewEditor({ interview, questions }: { interview: {
               <label className="font-semibold flex justify-between w-81"><p>Question</p> <p className="text-red-400">*</p></label>
               <select className="bg-slate-300 dark:bg-slate-800 w-81 p-1 rounded-lg" value={questionID.toString()} onChange={(e) => setQuestionID(parseInt(e.target.value))}>
                 <option disabled={true} value={0}>-- Select a question --</option>
-                {questions.filter((q) => isDisplayable(responses.map((res) => { return { id: res.q } }), q)).sort((a, b) => b.id - a.id).map((q) => <option key={q.id} value={q.id}>{q.question}</option>)}
+                {questions.filter((q) => isDisplayable(responses.map((res) => { return { id: res.id } }), q)).sort((a, b) => b.id - a.id).map((q) => <option key={q.id} value={q.id}>{q.question}</option>)}
               </select>
             </div>
             <div className="flex flex-col gap-1">
@@ -80,9 +80,9 @@ export default function InterviewEditor({ interview, questions }: { interview: {
           <p>Add some using the form!</p>
         </div>}
         {responses.length >= 1 && <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-          {responses.map((response) => <div key={response.q} className="flex flex-col bg-slate-300 dark:bg-slate-800 p-2 rounded-xl">
-            <h2 className="text-lg font-semibold">{(questions.find((q) => q.id === response.q) || { question: "Unknown Question" }).question}</h2>
-            <p>{response.a}</p>
+          {responses.map((response) => <div key={response.id} className="flex flex-col bg-slate-300 dark:bg-slate-800 p-2 rounded-xl">
+            <h2 className="text-lg font-semibold mb-1">{(questions.find((q) => q.id === response.id) || { question: "Unknown Question" }).question}</h2>
+            <ResponseEditor id={response.id} responses={responses} setResponses={setResponses} />
           </div>)}
         </div>}
       </div>

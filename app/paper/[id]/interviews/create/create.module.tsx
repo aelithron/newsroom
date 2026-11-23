@@ -2,7 +2,7 @@
 import { faPlus, faSave } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/navigation";
-import { useState, type SubmitEvent } from "react";
+import { type Dispatch, type SetStateAction, useState, type SubmitEvent, useEffect } from "react";
 
 export default function CreateInterviewForm({ paperID, questions }: { paperID: string, questions: { id: number, text: string, enabled: boolean }[] }) {
   const router = useRouter();
@@ -79,8 +79,8 @@ export default function CreateInterviewForm({ paperID, questions }: { paperID: s
         </div>}
         {responses.length >= 1 && <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {responses.map((response) => <div key={response.id} className="flex flex-col bg-slate-300 dark:bg-slate-800 p-2 rounded-xl">
-            <h2 className="text-lg font-semibold">{(questions.find((q) => q.id === response.id) || { text: "Unknown Question" }).text}</h2>
-            <p>{response.answer}</p>
+            <h2 className="text-lg font-semibold mb-1">{(questions.find((q) => q.id === response.id) || { text: "Unknown Question" }).text}</h2>
+            <ResponseEditor id={response.id} responses={responses} setResponses={setResponses} />
           </div>)}
         </div>}
       </div>
@@ -93,4 +93,16 @@ export function isDisplayable(responses: { id: number }[], question: { id: numbe
   for (const res of responses) usedIDs.push(res.id);
   if (usedIDs.includes(question.id)) return false;
   return question.enabled;
+}
+export function ResponseEditor({ id, responses, setResponses } : { id: number, responses: { id: number, answer: string }[], setResponses: Dispatch<SetStateAction<{ id: number, answer: string }[]>> }) {
+  const [response, setResponse] = useState<string>((responses.find((res) => res.id === id) || { answer: "" }).answer);
+  useEffect(() => {
+    const base = [...responses].filter((res) => res.id !== id);
+    base.push({ id, answer: response });
+    setResponses(base);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [response]);
+  return (
+    <textarea rows={7} className="bg-slate-300 dark:bg-slate-800 border-2 border-slate-400 dark:border-slate-900 w-full p-1 rounded-lg" value={response} onChange={(e) => setResponse(e.target.value)} />
+  )
 }
