@@ -6,7 +6,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { headers } from "next/headers";
 import { Suspense } from "react";
 import InterviewEditor from "./edit.module";
+import { Metadata } from "next";
 
+export const metadata: Metadata = { title: "Edit Interview" };
 export default function Page({ params }: { params: Promise<{ id: string, resID: string }> }) {
   return (
     <main className="flex flex-col min-h-screen p-8 md:px-20">

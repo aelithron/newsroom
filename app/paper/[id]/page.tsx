@@ -4,10 +4,12 @@ import { db } from "@/utils/db";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { faAngleRight, faMicrophone, faNewspaper } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Metadata } from "next";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { Suspense } from "react";
 
+export const metadata: Metadata = { title: "Paper" };
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
   return (
     <main className="flex flex-col min-h-screen p-8 md:px-20">

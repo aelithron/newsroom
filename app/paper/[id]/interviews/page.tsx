@@ -7,7 +7,9 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { Suspense } from "react";
 import CreateQuestions from "./question.module";
+import { Metadata } from "next";
 
+export const metadata: Metadata = { title: "Interviews" };
 export default function Page({ params }: { params: Promise<{ id: string }> }) {
   return (
     <main className="flex flex-col min-h-screen p-8 md:px-20">

@@ -6,7 +6,9 @@ import { headers } from "next/headers";
 import { Suspense } from "react";
 import { GeneralHeader } from "@/app/framing.module";
 import { BackButton } from "@/app/ui.module";
+import { Metadata } from "next";
 
+export const metadata: Metadata = { title: "Create Paper" };
 export default function Page() {
   return (
     <main>

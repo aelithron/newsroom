@@ -3,10 +3,12 @@ import { auth } from "@/utils/auth";
 import { db } from "@/utils/db";
 import { faMicrophone, faPencil } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Metadata } from "next";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { Suspense } from "react";
 
+export const metadata: Metadata = { title: "View Interview" };
 export default function Page({ params }: { params: Promise<{ id: string, resID: string }> }) {
   return (
     <main className="flex flex-col min-h-screen p-8 md:px-20">

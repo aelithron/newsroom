@@ -38,6 +38,10 @@ export default function InterviewEditor({ interview, questions }: { interview: {
       alert("Please add at least one response!");
       return;
     }
+    if (response.trim().length >= 0) {
+      const check = confirm("You have started adding a response, but haven't clicked the Add Response button yet.\nIf you continue before adding it, that response will be lost.\nDo you want to continue anyway?");
+      if (!check) return;
+    }
     try {
       let sentName: string | null = name;
       if (name.trim().length < 1) sentName = null;
