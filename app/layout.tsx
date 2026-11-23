@@ -11,7 +11,7 @@ const ibmPlexSerif = IBM_Plex_Serif({ subsets: ["latin"], weight: ["300", "400",
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${ibmPlexSerif.className} h-full antialiased`}>
+    <html lang="en" className={`${ibmPlexSerif.className} h-full antialiased has-data-loader:overflow-hidden`}>
       <body className="min-h-full flex flex-col">
         {children}
         <Footer />
