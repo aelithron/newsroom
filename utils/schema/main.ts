@@ -1,4 +1,4 @@
-import { integer, text, jsonb, pgTable, primaryKey, boolean } from "drizzle-orm/pg-core";
+import { integer, text, jsonb, pgTable, primaryKey, boolean, timestamp } from "drizzle-orm/pg-core";
 import { user } from "./auth";
 import { defineRelationsPart } from "drizzle-orm";
 
@@ -23,7 +23,8 @@ export const interviewTable = pgTable("interviews", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   paperID: integer("paper_id").notNull().references(() => paperTable.id, { onDelete: "cascade" }),
   name: text(),
-  responses: jsonb().notNull().$type<{ q: number, a: string }[]>()
+  responses: jsonb().notNull().$type<{ q: number, a: string }[]>(),
+  createdAt: timestamp("created_at", { mode: "date", withTimezone: true }).notNull().defaultNow()
 });
 
 export const relations = defineRelationsPart({ staffTable, paperTable, interviewTable, interviewQuestionTable, user }, (r) => ({

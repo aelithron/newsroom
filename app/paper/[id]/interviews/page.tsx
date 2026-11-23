@@ -1,7 +1,7 @@
 import { BackButton, Loader, PaperNotFound } from "@/app/ui.module";
 import { auth } from "@/utils/auth";
 import { db } from "@/utils/db";
-import { faMicrophone, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faAngleRight, faMicrophone, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { headers } from "next/headers";
 import Link from "next/link";
@@ -38,9 +38,12 @@ async function PaperInterviews({ params }: { params: Promise<{ id: string }> }) 
             <p>Add one with the button above, or ask another team member to.</p>
           </div>}
           {paper.interviews.length >= 1 && <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {paper.interviews.sort((a, b) => b.id - a.id).map((interview) => <Link key={interview.id} href={`/paper/${paper.id}/interviews/${interview.id}`} className="flex flex-col p-2 bg-slate-300 dark:bg-slate-800 rounded-lg">
-              <h2 className="font-semibold text-lg hover:text-sky-500 w-fit">{interview.name || "Unknown"}</h2>
-              <p>Responses: {interview.responses.length}</p>
+            {paper.interviews.sort((a, b) => b.id - a.id).map((interview) => <Link key={interview.id} href={`/paper/${paper.id}/interviews/${interview.id}`} className="flex justify-between items-center p-2 bg-slate-300 dark:bg-slate-800 rounded-lg">
+              <div className="flex flex-col gap-1">
+                <h2 className="font-semibold text-lg hover:text-sky-500 w-fit">{interview.name || "Unknown"}</h2>
+                <p>Responses: {interview.responses.length}</p>
+              </div>
+              <FontAwesomeIcon icon={faAngleRight} size="2xl" className="hover:text-sky-500" />
             </Link>)}
           </div>}
         </div>

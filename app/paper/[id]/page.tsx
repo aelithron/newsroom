@@ -2,7 +2,7 @@ import { BackButton, Loader, PaperNotFound } from "@/app/ui.module";
 import { auth } from "@/utils/auth";
 import { db } from "@/utils/db";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { faAngleRight, faMicrophone, faNewspaper } from "@fortawesome/free-solid-svg-icons";
+import { faAngleRight, faBriefcase, faFileLines, faMicrophone, faNewspaper } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Metadata } from "next";
 import { headers } from "next/headers";
@@ -29,8 +29,10 @@ async function PaperHome({ params }: { params: Promise<{ id: string }> }) {
     <div className="flex flex-col gap-2">
       <h1 className="font-semibold text-2xl"><FontAwesomeIcon icon={faNewspaper} /> {paper.name}</h1>
       <h2>Welcome, {session.user.name}!</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <MenuCard link={`/paper/${(await params).id}/interviews`} icon={faMicrophone} title="Interviews" desc="See and add interviews!" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-1">
+        <MenuCard link={`/paper/${paper.id}/articles`} icon={faFileLines} title="Articles" desc="Write and manage articles!" />
+        <MenuCard link={`/paper/${paper.id}/interviews`} icon={faMicrophone} title="Interviews" desc="View and add interviews!" />
+        <MenuCard link={`/paper/${paper.id}/admin`} icon={faBriefcase} title="Administration" desc="Manage this paper's settings!" />
       </div>
     </div>
   );
