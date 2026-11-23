@@ -55,3 +55,21 @@ export async function PATCH(req: NextRequest) {
   await db.update(interviewTable).set(changed).where(and(eq(interviewTable.paperID, parseInt(body.paperID)), eq(interviewTable.id, parseInt(body.interviewID))));
   return NextResponse.json({ success: true });
 }
+
+export async function DELETE(req: NextRequest) {
+  const session = await auth.api.getSession({ headers: req.headers });
+  if (!session) return NextResponse.json({ error: "unauthorized", message: "You aren't authenticated! Please pass your auth cookies." }, { status: 401 });
+  let body;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "malformed", message: "Your request body isn't properly formatted JSON!" }, { status: 400 });
+  }
+  if (!body.paperID || Number.isNaN(parseInt(body.paperID))) return NextResponse.json({ error: "invalid_paper", message: "Your paper ID is missing/invalid!" }, { status: 400 });
+  if (!body.interviewID || Number.isNaN(parseInt(body.interviewID))) return NextResponse.json({ error: "invalid_interview", message: "Your interview ID is missing/invalid!" }, { status: 400 });
+  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt(body.paperID) }, with: { staff: true, interviews: true } });
+  if (!paper || !paper.staff.find((e) => e.id === session.user.id)) return NextResponse.json({ error: "not_found", message: "Either that paper ID doesn't exist, or you don't have permission to access it." }, { status: 404 });
+  if (!paper.interviews.find((i) => i.id === parseInt(body.interviewID))) return NextResponse.json({ error: "not_found_interview", message: "That interview ID doesn't exist on that paper." });
+  await db.delete(interviewTable).where(and(eq(interviewTable.paperID, parseInt(body.paperID)), eq(interviewTable.id, parseInt(body.interviewID))));
+  return NextResponse.json({ success: true });
+}
