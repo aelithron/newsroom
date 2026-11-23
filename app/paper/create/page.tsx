@@ -4,13 +4,19 @@ import CreatePaperForm from "./create.module";
 import { auth } from "@/utils/auth";
 import { headers } from "next/headers";
 import { Suspense } from "react";
+import { GeneralHeader } from "@/app/framing.module";
+import { BackButton } from "@/app/ui.module";
 
 export default function Page() {
   return (
-    <main className="flex flex-col min-h-screen p-8 md:px-20">
-      <h1 className="text-2xl font-semibold"><FontAwesomeIcon icon={faPlus} /> Create a Paper</h1>
-      <Suspense fallback={<p>Note: If you are looking to join a paper, ask your manager/admin to add you instead.</p>}><Notice /></Suspense>
-      <CreatePaperForm />
+    <main>
+      <GeneralHeader />
+      <div className="flex flex-col min-h-screen p-8 md:px-20">
+        <BackButton link="/paper" />
+        <h1 className="text-2xl font-semibold mt-2"><FontAwesomeIcon icon={faPlus} /> Create a Paper</h1>
+        <Suspense fallback={<p>Note: If you are looking to join a paper, ask your manager/admin to add you instead.</p>}><Notice /></Suspense>
+        <CreatePaperForm />
+      </div>
     </main>
   )
 }

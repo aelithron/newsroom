@@ -18,7 +18,7 @@ export function PaperNotFound() {
 export function Loader({ children }: { children?: ReactNode }) {
   const override: CSSProperties = { alignItems: "flex-end", display: "flex", marginBottom: 4 };
   return (
-    <div className="flex flex-col min-h-screen align-middle justify-center text-center items-center gap-4">
+    <div className="flex flex-col min-h-screen align-middle justify-center text-center items-center gap-4 overscroll-none scrollbar-none o">
       <ClockLoader color={"#8b5cf6"} size={150} />
       {!children ? <div className="text-2xl font-semibold flex"><p>Loading</p><PulseLoader cssOverride={override} color="var(--foreground)" size={4} /></div>: <div className="text-2xl font-semibold flex"><p>Loading {children}</p><PulseLoader color="var(--foreground)" cssOverride={override} size={4} /></div>}
     </div>
