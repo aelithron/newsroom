@@ -14,7 +14,6 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
   return (
     <main className="flex flex-col min-h-screen p-8 md:px-20">
       <Suspense fallback={<Loader>Paper</Loader>}>
-        <BackButton link="/paper" className="mb-2" />
         <PaperHome params={params} />
       </Suspense>
     </main>
@@ -27,6 +26,7 @@ async function PaperHome({ params }: { params: Promise<{ id: string }> }) {
   if (!paper || !paper.staff.find((a) => a.id === session.user.id)) return (<PaperNotFound />);
   return (
     <div className="flex flex-col gap-2">
+      <BackButton link="/paper" className="mb-2" />
       <h1 className="font-semibold text-2xl"><FontAwesomeIcon icon={faNewspaper} /> {paper.name}</h1>
       <h2>Welcome, {session.user.name}!</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-1">
