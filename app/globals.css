@@ -17,6 +17,17 @@
   }
 }
 
+::view-transition-old(.loader-exit) {
+  animation: 300ms ease-out both loader-fade;
+  z-index: 50;
+}
+::view-transition-new(.loader-exit) {
+  animation: none;
+}
+@keyframes loader-fade {
+  to { opacity: 0; }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

@@ -1,7 +1,7 @@
 import { faArrowLeft, faHome } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import { CSSProperties, ReactNode } from "react";
+import { CSSProperties, ReactNode, ViewTransition } from "react";
 import { ClockLoader, PulseLoader } from "react-spinners";
 
 export function BackButton({ link, className }: { link: string, className?: string }) {
@@ -18,9 +18,11 @@ export function PaperNotFound() {
 export function Loader({ children }: { children?: ReactNode }) {
   const override: CSSProperties = { alignItems: "flex-end", display: "flex", marginBottom: 4 };
   return (
-    <div data-loader className="fixed inset-0 z-50 bg-white dark:bg-black flex flex-col min-h-screen align-middle justify-center text-center items-center gap-4">
-      <ClockLoader color={"#8b5cf6"} size={150} />
-      {!children ? <div className="text-2xl font-semibold flex"><p>Loading</p><PulseLoader cssOverride={override} color="var(--foreground)" size={4} /></div>: <div className="text-2xl font-semibold flex"><p>Loading {children}</p><PulseLoader color="var(--foreground)" cssOverride={override} size={4} /></div>}
-    </div>
+    <ViewTransition exit={"loader-exit"} default={"none"}>
+      <div data-loader className="fixed inset-0 z-50 bg-white dark:bg-black flex flex-col min-h-screen align-middle justify-center text-center items-center gap-4">
+        <ClockLoader color={"#8b5cf6"} size={150} />
+        {!children ? <div className="text-2xl font-semibold flex"><p>Loading</p><PulseLoader cssOverride={override} color="var(--foreground)" size={4} /></div>: <div className="text-2xl font-semibold flex"><p>Loading {children}</p><PulseLoader color="var(--foreground)" cssOverride={override} size={4} /></div>}
+      </div>
+    </ViewTransition>
   ) 
 }

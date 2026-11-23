@@ -28,6 +28,10 @@ export default function CreateInterviewForm({ paperID, questions }: { paperID: s
   }
   async function handleSubmit() {
     let body;
+    if (responses.length < 1) {
+      alert("Please add at least one response!");
+      return;
+    }
     try {
       const res = await fetch("/api/interviews", { method: "POST", body: JSON.stringify({ paperID, name: name.length >= 1 ? name : undefined, responses }) });
       body = await res.json();
@@ -41,12 +45,6 @@ export default function CreateInterviewForm({ paperID, questions }: { paperID: s
       return;
     }
     router.push(`/paper/${paperID}/interviews/${body.id}`);
-  }
-  function isDisplayable(question: { id: number, enabled: boolean }) {
-    const usedIDs: number[] = [];
-    for (const res of responses) usedIDs.push(res.id);
-    if (usedIDs.includes(question.id)) return false;
-    return question.enabled;
   }
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -62,7 +60,7 @@ export default function CreateInterviewForm({ paperID, questions }: { paperID: s
               <label className="font-semibold flex justify-between w-81"><p>Question</p> <p className="text-red-400">*</p></label>
               <select className="bg-slate-300 dark:bg-slate-800 w-81 p-1 rounded-lg" value={questionID.toString()} onChange={(e) => setQuestionID(parseInt(e.target.value))}>
                 <option disabled={true} value={0}>-- Select a question --</option>
-                {questions.filter((q) => isDisplayable(q)).sort((a, b) => b.id - a.id).map((q) => <option key={q.id} value={q.id}>{q.text}</option>)}
+                {questions.filter((q) => isDisplayable(responses, q)).sort((a, b) => b.id - a.id).map((q) => <option key={q.id} value={q.id}>{q.text}</option>)}
               </select>
             </div>
             <div className="flex flex-col gap-1">
@@ -89,4 +87,10 @@ export default function CreateInterviewForm({ paperID, questions }: { paperID: s
       <button type="button" onClick={handleSubmit} className="bg-slate-300 dark:bg-slate-800 p-2 rounded-lg w-fit hover:text-sky-500 mt-6"><FontAwesomeIcon icon={faSave} /> Save Interview</button>
     </div>
   )
+}
+export function isDisplayable(responses: { id: number }[], question: { id: number, enabled: boolean }) {
+  const usedIDs: number[] = [];
+  for (const res of responses) usedIDs.push(res.id);
+  if (usedIDs.includes(question.id)) return false;
+  return question.enabled;
 }
