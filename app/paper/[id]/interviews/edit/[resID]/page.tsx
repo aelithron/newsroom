@@ -12,15 +12,15 @@ export const metadata: Metadata = { title: "Edit Interview" };
 export default function Page({ params }: { params: Promise<{ id: string, resID: string }> }) {
   return (
     <main className="flex flex-col min-h-screen p-8 md:px-20">
-      <Suspense fallback={<Loader>Interview</Loader>}><EditInterview params={params} /></Suspense>
+      <Suspense fallback={<Loader>Interview Editor</Loader>}><EditInterview params={params} /></Suspense>
     </main>
   )
 }
 async function EditInterview({ params }: { params: Promise<{ id: string, resID: string }> }) {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return (<PaperNotFound />);
-  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt((await params).id) }, with: { staff: true, interviews: true, questions: true } });
-  if (!paper || !paper.staff.find((a) => a.id === session.user.id)) return (<PaperNotFound />);
+  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt((await params).id) }, with: { memberships: true, interviews: true, questions: true } });
+  if (!paper || !paper.memberships.find((a) => a.id === session.user.id)) return (<PaperNotFound />);
   const resID = parseInt((await params).resID);
   const interview = paper.interviews.find((res) => res.id === resID);
   if (!interview) return (<div></div>);

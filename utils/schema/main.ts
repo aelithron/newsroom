@@ -31,9 +31,13 @@ export const interviewTable = pgTable("interviews", {
 
 export const relations = defineRelationsPart({ staffTable, paperTable, interviewTable, interviewQuestionTable, user }, (r) => ({
   paperTable: {
-    staff: r.many.user({
+    memberships: r.many.user({
       from: r.paperTable.id.through(r.staffTable.paperID),
       to: r.user.id.through(r.staffTable.userID)
+    }),
+    staff: r.many.staffTable({
+      from: r.paperTable.id,
+      to: r.staffTable.paperID
     }),
     interviews: r.many.interviewTable({
       from: r.paperTable.id,
@@ -42,6 +46,12 @@ export const relations = defineRelationsPart({ staffTable, paperTable, interview
     questions: r.many.interviewQuestionTable({
       from: r.paperTable.id,
       to: r.interviewQuestionTable.paperID
+    })
+  },
+  staffTable: {
+    user: r.one.user({
+      from: r.staffTable.userID,
+      to: r.user.id
     })
   },
   user: {

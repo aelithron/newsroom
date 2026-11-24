@@ -29,8 +29,9 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "malformed", message: "Your request body isn't properly formatted JSON!" }, { status: 400 });
   }
   if (!body.paperID || (body.paperID as string).trim().length < 1) return NextResponse.json({ error: "invalid_paper", message: "Your paper ID is missing/invalid!" }, { status: 400 });
-  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt(body.paperID) }, with: { staff: true } });
-  if (!paper || !paper.staff.find((e) => e.id === session.user.id)) return NextResponse.json({ error: "not_found", message: "Either that paper ID doesn't exist, or you don't have permission to access it." }, { status: 404 });
+  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt(body.paperID) }, with: { memberships: true } });
+  if (!paper || !paper.memberships.find((e) => e.id === session.user.id)) return NextResponse.json({ error: "not_found", message: "Either that paper ID doesn't exist, or you don't have permission to access it." }, { status: 404 });
+  
   const changes = { name: (body.name && (body.name as string).trim().length >= 1) ? (body.name as string).trim() : undefined };
   await db.update(paperTable).set(changes).where(eq(paperTable.id, paper.id));
   return NextResponse.json({ success: true });

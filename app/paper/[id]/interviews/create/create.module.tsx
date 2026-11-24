@@ -36,7 +36,7 @@ export default function CreateInterviewForm({ paperID, questions }: { paperID: s
       alert("Please add at least one response!");
       return;
     }
-    if (response.trim().length >= 0) {
+    if (response.trim().length >= 1) {
       const check = confirm("You have started adding a response, but haven't clicked the Add Response button yet.\nIf you continue before adding it, that response will be lost.\nDo you want to continue anyway?");
       if (!check) return;
     }

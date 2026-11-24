@@ -19,8 +19,8 @@ export default function Page({ params }: { params: Promise<{ id: string, resID: 
 async function ViewInterview({ params }: { params: Promise<{ id: string, resID: string }> }) {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return (<PaperNotFound />);
-  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt((await params).id) }, with: { staff: true, interviews: true, questions: true } });
-  if (!paper || !paper.staff.find((a) => a.id === session.user.id)) return (<PaperNotFound />);
+  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt((await params).id) }, with: { memberships: true, interviews: true, questions: true } });
+  if (!paper || !paper.memberships.find((a) => a.id === session.user.id)) return (<PaperNotFound />);
   const resID = parseInt((await params).resID);
   const interview = paper.interviews.find((res) => res.id === resID);
   if (!interview) return (<div></div>);

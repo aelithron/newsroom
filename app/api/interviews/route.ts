@@ -20,8 +20,8 @@ export async function POST(req: NextRequest) {
     responses.push({ q: parseInt(item.id), a: (item.answer as string).trim() });
   }
   if (!body.paperID || Number.isNaN(parseInt(body.paperID))) return NextResponse.json({ error: "invalid_paper", message: "Your paper ID is missing/invalid!" }, { status: 400 });
-  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt(body.paperID) }, with: { staff: true } });
-  if (!paper || !paper.staff.find((e) => e.id === session.user.id)) return NextResponse.json({ error: "not_found", message: "Either that paper ID doesn't exist, or you don't have permission to access it." }, { status: 404 });
+  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt(body.paperID) }, with: { memberships: true } });
+  if (!paper || !paper.memberships.find((e) => e.id === session.user.id)) return NextResponse.json({ error: "not_found", message: "Either that paper ID doesn't exist, or you don't have permission to access it." }, { status: 404 });
   const result = await db.insert(interviewTable).values({ paperID: parseInt(body.paperID), name: body.name || undefined, responses }).returning({ id: interviewTable.id });
   return NextResponse.json({ id: result[0].id });
 }
@@ -44,8 +44,8 @@ export async function PATCH(req: NextRequest) {
       responses.push({ q: parseInt(item.id), a: (item.answer as string).trim() });
     }
   }
-  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt(body.paperID) }, with: { staff: true, interviews: true } });
-  if (!paper || !paper.staff.find((e) => e.id === session.user.id)) return NextResponse.json({ error: "not_found", message: "Either that paper ID doesn't exist, or you don't have permission to access it." }, { status: 404 });
+  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt(body.paperID) }, with: { memberships: true, interviews: true } });
+  if (!paper || !paper.memberships.find((e) => e.id === session.user.id)) return NextResponse.json({ error: "not_found", message: "Either that paper ID doesn't exist, or you don't have permission to access it." }, { status: 404 });
   if (!paper.interviews.find((i) => i.id === parseInt(body.interviewID))) return NextResponse.json({ error: "not_found_interview", message: "That interview ID doesn't exist on that paper." });
   let sentName: string | null | undefined = body.name;
   if (body.name && body.name.trim().length < 1) sentName = null;
@@ -67,8 +67,8 @@ export async function DELETE(req: NextRequest) {
   }
   if (!body.paperID || Number.isNaN(parseInt(body.paperID))) return NextResponse.json({ error: "invalid_paper", message: "Your paper ID is missing/invalid!" }, { status: 400 });
   if (!body.interviewID || Number.isNaN(parseInt(body.interviewID))) return NextResponse.json({ error: "invalid_interview", message: "Your interview ID is missing/invalid!" }, { status: 400 });
-  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt(body.paperID) }, with: { staff: true, interviews: true } });
-  if (!paper || !paper.staff.find((e) => e.id === session.user.id)) return NextResponse.json({ error: "not_found", message: "Either that paper ID doesn't exist, or you don't have permission to access it." }, { status: 404 });
+  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt(body.paperID) }, with: { memberships: true, interviews: true } });
+  if (!paper || !paper.memberships.find((e) => e.id === session.user.id)) return NextResponse.json({ error: "not_found", message: "Either that paper ID doesn't exist, or you don't have permission to access it." }, { status: 404 });
   if (!paper.interviews.find((i) => i.id === parseInt(body.interviewID))) return NextResponse.json({ error: "not_found_interview", message: "That interview ID doesn't exist on that paper." });
   await db.delete(interviewTable).where(and(eq(interviewTable.paperID, parseInt(body.paperID)), eq(interviewTable.id, parseInt(body.interviewID))));
   return NextResponse.json({ success: true });
