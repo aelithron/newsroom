@@ -1,4 +1,5 @@
-import { faArrowLeft, faHome } from "@fortawesome/free-solid-svg-icons";
+import type { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { faAngleRight, faArrowLeft, faHome } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { CSSProperties, ReactNode, ViewTransition } from "react";
@@ -6,14 +7,6 @@ import { ClockLoader, PulseLoader } from "react-spinners";
 
 export function BackButton({ link, className }: { link: string, className?: string }) {
   return (<Link href={link} className={`p-1 bg-slate-300 dark:bg-slate-800 rounded-xl w-fit hover:text-sky-500 ${className === undefined ? className : ""}`}><FontAwesomeIcon icon={faArrowLeft} /></Link>);
-}
-export function PaperNotFound() {
-  return (
-    <div className="flex flex-col">
-      <p className="text-lg font-semibold">Paper not found!</p>
-      <Link href="/paper" className="bg-violet-300 dark:bg-violet-800 rounded-lg p-1 w-fit mt-2 hover:text-sky-500"><FontAwesomeIcon icon={faHome} /> Go Home</Link>
-    </div>
-  );
 }
 export function Loader({ children }: { children?: ReactNode }) {
   const override: CSSProperties = { alignItems: "flex-end", display: "flex", marginBottom: 4 };
@@ -25,4 +18,31 @@ export function Loader({ children }: { children?: ReactNode }) {
       </div>
     </ViewTransition>
   ) 
+}
+export function MenuCard({ link, icon, title, desc }: { link: string, icon: IconProp, title: string, desc: string }) {
+  return (
+    <Link href={link} className="flex p-2 rounded-lg bg-slate-300 dark:bg-slate-800 justify-between items-center">
+      <div className="flex flex-col gap-1">
+        <h1 className="text-xl font-semibold hover:text-sky-500"><FontAwesomeIcon icon={icon} /> {title}</h1>
+        <p className="text-lg">{desc}</p>
+      </div>
+      <FontAwesomeIcon icon={faAngleRight} size="2xl" className="hover:text-sky-500" />
+    </Link>
+  )
+}
+export function PaperNotFound() {
+  return (
+    <div className="flex flex-col">
+      <p className="text-lg font-semibold">Paper not found!</p>
+      <Link href="/paper" className="bg-violet-300 dark:bg-violet-800 rounded-lg p-1 w-fit mt-2 hover:text-sky-500"><FontAwesomeIcon icon={faHome} /> Go Home</Link>
+    </div>
+  );
+}
+export function ItemNotFound({ item, backLink }: { item: "Interview", backLink?: string }) {
+  return (
+    <div className="flex flex-col">
+      <p className="text-lg font-semibold">{item} not found!</p>
+      <Link href={backLink || "/paper"} className="bg-violet-300 dark:bg-violet-800 rounded-lg p-1 w-fit mt-2 hover:text-sky-500"><FontAwesomeIcon icon={faArrowLeft} /> Go Back</Link>
+    </div>
+  );
 }

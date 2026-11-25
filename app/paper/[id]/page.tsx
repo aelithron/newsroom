@@ -1,12 +1,10 @@
-import { BackButton, Loader, PaperNotFound } from "@/app/ui.module";
+import { BackButton, Loader, MenuCard, PaperNotFound } from "@/app/ui.module";
 import { auth } from "@/utils/auth";
 import { db } from "@/utils/db";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { faAngleRight, faBriefcase, faFileLines, faMicrophone, faNewspaper } from "@fortawesome/free-solid-svg-icons";
+import { faBriefcase, faFileLines, faMicrophone, faNewspaper } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Metadata } from "next";
 import { headers } from "next/headers";
-import Link from "next/link";
 import { Suspense } from "react";
 
 export const metadata: Metadata = { title: "Paper" };
@@ -36,15 +34,4 @@ async function PaperHome({ params }: { params: Promise<{ id: string }> }) {
       </div>
     </div>
   );
-}
-function MenuCard({ link, icon, title, desc }: { link: string, icon: IconProp, title: string, desc: string }) {
-  return (
-    <Link href={link} className="flex p-2 rounded-lg bg-slate-300 dark:bg-slate-800 justify-between items-center">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-xl font-semibold hover:text-sky-500"><FontAwesomeIcon icon={icon} /> {title}</h1>
-        <p className="text-lg">{desc}</p>
-      </div>
-      <FontAwesomeIcon icon={faAngleRight} size="2xl" className="hover:text-sky-500" />
-    </Link>
-  )
 }

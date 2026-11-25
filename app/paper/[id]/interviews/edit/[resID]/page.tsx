@@ -1,4 +1,4 @@
-import { BackButton, Loader, PaperNotFound } from "@/app/ui.module";
+import { BackButton, ItemNotFound, Loader, PaperNotFound } from "@/app/ui.module";
 import { auth } from "@/utils/auth";
 import { db } from "@/utils/db";
 import { faMicrophone } from "@fortawesome/free-solid-svg-icons";
@@ -23,7 +23,7 @@ async function EditInterview({ params }: { params: Promise<{ id: string, resID: 
   if (!paper || !paper.memberships.find((a) => a.id === session.user.id)) return (<PaperNotFound />);
   const resID = parseInt((await params).resID);
   const interview = paper.interviews.find((res) => res.id === resID);
-  if (!interview) return (<div></div>);
+  if (!interview) return (<ItemNotFound item="Interview" backLink={`/paper/${(await params).id}/interviews`} />);
   return (
     <div className="flex flex-col gap-2">
       <BackButton link={`/paper/${(await params).id}/interviews/${(await params).resID}`} />

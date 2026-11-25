@@ -1,7 +1,7 @@
-import { BackButton, Loader, PaperNotFound } from "@/app/ui.module";
+import { BackButton, Loader, MenuCard, PaperNotFound } from "@/app/ui.module";
 import { auth } from "@/utils/auth";
 import { db } from "@/utils/db";
-import { faBriefcase } from "@fortawesome/free-solid-svg-icons";
+import { faBriefcase, faNewspaper, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Metadata } from "next";
 import { headers } from "next/headers";
@@ -27,6 +27,10 @@ async function AdminHome({ params }: { params: Promise<{ id: string }> }) {
         <h1 className="font-semibold text-2xl"><FontAwesomeIcon icon={faBriefcase} /> Administration</h1>
         <h2 className="text-xl pl-1 hidden md:block">-</h2>
         <h2 className="text-xl italic">{paper.name}</h2>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-1 gap-4">
+        <MenuCard link={`/paper/${(await params).id}/admin/general`} icon={faNewspaper} title="General" desc="View/change general paper settings!" />
+        <MenuCard link={`/paper/${(await params).id}/admin/staff`} icon={faUsers} title="Staff" desc="See and edit the paper's staff!" />
       </div>
     </div>
   )
