@@ -30,6 +30,18 @@ export function MenuCard({ link, icon, title, desc }: { link: string, icon: Icon
     </Link>
   )
 }
+export function RoleParser({ role }: { role: string | null }) {
+  switch (role) {
+    case "reader":
+      return <p>Role: Reader</p>
+    case "writer":
+      return <p>Role: Writer</p>
+    case "manager":
+      return <p>Role: Manager</p>
+    default:
+      return null;
+  }
+}
 export function PaperNotFound() {
   return (
     <div className="flex flex-col">

@@ -6,7 +6,7 @@ import { Metadata } from "next";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { Suspense } from "react";
-import { Loader } from "../ui.module";
+import { Loader, RoleParser } from "../ui.module";
 import { GeneralHeader } from "../framing.module";
 
 export const metadata: Metadata = { title: "Your Papers" }
@@ -49,17 +49,4 @@ async function Papers() {
       </Link>)}
     </div>
   );
-}
-
-function RoleParser({ role }: { role: string | null }) {
-  switch (role) {
-    case "reader":
-      return <p>Role: Reader</p>
-    case "writer":
-      return <p>Role: Writer</p>
-    case "manager":
-      return <p>Role: Manager</p>
-    default:
-      return null;
-  }
 }
