@@ -27,12 +27,12 @@ async function PaperInterviews({ params }: { params: Promise<{ id: string }> }) 
       <BackButton link={`/paper/${(await params).id}`} />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 flex flex-col gap-2">
-          <div className="flex gap-1 align-middle items-center">
+          <div className="flex flex-col md:flex-row gap-1 align-middle items-center">
             <h1 className="font-semibold text-2xl"><FontAwesomeIcon icon={faMicrophone} /> Interviews</h1>
-            <h2 className="text-xl pl-1">-</h2>
+            <h2 className="text-xl pl-1 hidden md:block">-</h2>
             <h2 className="text-xl italic">{paper.name}</h2>
           </div>
-          <Link href={`/paper/${(await params).id}/interviews/create`} className="bg-violet-300 dark:bg-violet-800 p-1 rounded-lg hover:text-sky-500 w-fit mt-1 mb-2"><FontAwesomeIcon icon={faPlus} /> Add Interview</Link>
+          <Link href={`/paper/${(await params).id}/interviews/create`} className="bg-violet-300 dark:bg-violet-800 p-1 rounded-lg hover:text-sky-500 w-fit mt-1 mb-2 mx-auto md:mx-0"><FontAwesomeIcon icon={faPlus} /> Add Interview</Link>
           {paper.interviews.length < 1 && <div className="flex flex-col gap-1 mt-2 text-lg lg:col-span-2">
             <p>This paper doesn&apos;t have any interviews yet!</p>
             <p>Add one with the button above, or ask another team member to.</p>

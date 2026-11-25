@@ -16,9 +16,9 @@ export default function Page() {
       <Suspense fallback={<Loader>Papers</Loader>}>
         <GeneralHeader />
         <div className="flex flex-col min-h-screen p-8 md:px-20">
-          <div className="flex gap-2 align-middle">
+          <div className="flex flex-col md:flex-row gap-2 align-middle mx-auto md:mx-0">
             <h1 className="text-2xl font-semibold"><FontAwesomeIcon icon={faNewspaper} /> Your Papers</h1>
-            <Link href={"/paper/create"} className="hover:text-sky-500 bg-slate-300 dark:bg-slate-800 py-1 px-2 rounded-xl"><FontAwesomeIcon icon={faPlus} /> Create</Link>
+            <Link href={"/paper/create"} className="hover:text-sky-500 bg-slate-300 dark:bg-slate-800 w-fit mx-auto md:mx-0 py-1 px-2 rounded-xl"><FontAwesomeIcon icon={faPlus} /> Create</Link>
           </div>
           <Papers />
         </div>
@@ -30,7 +30,7 @@ export default function Page() {
 async function Papers() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return null;
-  const userInfo = await db.query.user.findFirst({ where: { id: session.user.id }, with: { papers: true } });
+  const userInfo = await db.query.user.findFirst({ where: { id: session.user.id }, with: { papers: true, staff: { columns: { role: true, paperID: true } } } });
   if (!userInfo) return null;
   if (userInfo.papers.length < 1) {
     return (
@@ -45,7 +45,21 @@ async function Papers() {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mt-4">
       {userInfo.papers.map((paper) => <Link key={paper.id} href={`/paper/${paper.id}`} className="flex flex-col bg-slate-200 dark:bg-slate-800 p-2 rounded-lg">
         <h1 className="hover:text-sky-500 font-semibold text-lg"><FontAwesomeIcon icon={faNewspaper} /> {paper.name}</h1>
+        <RoleParser role={(userInfo.staff.find((entry) => entry.paperID === paper.id) || { role: null }).role} />
       </Link>)}
     </div>
   );
+}
+
+function RoleParser({ role }: { role: string | null }) {
+  switch (role) {
+    case "reader":
+      return <p>Role: Reader</p>
+    case "writer":
+      return <p>Role: Writer</p>
+    case "manager":
+      return <p>Role: Manager</p>
+    default:
+      return null;
+  }
 }

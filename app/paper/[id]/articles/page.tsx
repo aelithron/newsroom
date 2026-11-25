@@ -23,9 +23,9 @@ async function ArticleHome({ params }: { params: Promise<{ id: string }> }) {
   return (
     <div className="flex flex-col gap-2">
       <BackButton link={`/paper/${(await params).id}`} className="mb-2" />
-      <div className="flex gap-1 align-middle items-center">
+      <div className="flex flex-col md:flex-row gap-1 align-middle items-center">
         <h1 className="font-semibold text-2xl"><FontAwesomeIcon icon={faFileLines} /> Articles</h1>
-        <h2 className="text-xl pl-1">-</h2>
+        <h2 className="text-xl pl-1 hidden md:block">-</h2>
         <h2 className="text-xl italic">{paper.name}</h2>
       </div>
     </div>

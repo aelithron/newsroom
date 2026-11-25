@@ -58,6 +58,10 @@ export const relations = defineRelationsPart({ staffTable, paperTable, interview
     papers: r.many.paperTable({
       from: r.user.id.through(r.staffTable.userID),
       to: r.paperTable.id.through(r.staffTable.paperID)
+    }),
+    staff: r.many.staffTable({
+      from: r.user.id,
+      to: r.staffTable.userID
     })
   },
   interviewTable: {

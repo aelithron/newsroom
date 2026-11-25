@@ -80,30 +80,30 @@ export default function InterviewEditor({ interview, questions }: { interview: {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
       <div>
         <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 mx-auto md:mx-0">
             <label className="font-semibold w-81">Name</label>
             <input className="bg-slate-300 dark:bg-slate-800 w-81 p-1 rounded-lg" value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <form onSubmit={handleAddAnswer} className="flex flex-col gap-2">
-            <h2 className="font-semibold text-lg">Add Responses</h2>
-            <div className="flex flex-col gap-1">
+            <h2 className="font-semibold text-lg text-center md:text-start">Add Responses</h2>
+            <div className="flex flex-col gap-1 mx-auto md:mx-0">
               <label className="font-semibold flex justify-between w-81"><p>Question</p> <p className="text-red-400">*</p></label>
               <select className="bg-slate-300 dark:bg-slate-800 w-81 p-1 rounded-lg" value={questionID.toString()} onChange={(e) => setQuestionID(parseInt(e.target.value))}>
                 <option disabled={true} value={0}>-- Select a question --</option>
                 {questions.filter((q) => isDisplayable(responses.map((res) => { return { id: res.id } }), q)).sort((a, b) => b.id - a.id).map((q) => <option key={q.id} value={q.id}>{q.question}</option>)}
               </select>
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1 mx-auto md:mx-0">
               <label className="font-semibold flex justify-between w-81"><p>Response</p> <p className="text-red-400">*</p></label>
               <textarea rows={6} className="bg-slate-300 dark:bg-slate-800 w-81 p-1 rounded-lg" value={response} onChange={(e) => setResponse(e.target.value)} />
             </div>
-            <button type="submit" className="bg-violet-300 dark:bg-violet-800 p-2 rounded-lg w-fit mt-1 hover:text-sky-500"><FontAwesomeIcon icon={faPlus} /> Add Response</button>
+            <button type="submit" className="bg-violet-300 dark:bg-violet-800 p-2 rounded-lg w-fit mx-auto md:mx-0 mt-1 hover:text-sky-500"><FontAwesomeIcon icon={faPlus} /> Add Response</button>
           </form>
         </div>
       </div>
       <div className="flex flex-col gap-2 lg:col-span-2">
-        <h1 className="text-xl font-semibold">Responses</h1>
-        {responses.length < 1 && <div className="flex flex-col">
+        <h1 className="text-xl font-semibold text-center md:text-start mt-4 md:mt-0">Responses</h1>
+        {responses.length < 1 && <div className="flex flex-col text-center md:text-start">
           <p>No responses have been added yet.</p>
           <p>Add some using the form!</p>
         </div>}
@@ -117,7 +117,7 @@ export default function InterviewEditor({ interview, questions }: { interview: {
           </div>)}
         </div>}
       </div>
-      <div className="flex gap-2 mt-6">
+      <div className="flex gap-2 mt-6 mx-auto md:mx-0">
         <button type="button" onClick={handleSubmit} className="bg-slate-300 dark:bg-slate-800 p-2 rounded-lg w-fit hover:text-sky-500"><FontAwesomeIcon icon={faSave} /> Save Interview</button>
         <button type="button" onClick={handleDelete} className="bg-red-300 dark:bg-red-600 p-2 rounded-lg w-fit hover:text-sky-500"><FontAwesomeIcon icon={faTrash} /> Delete Interview</button>
       </div>
