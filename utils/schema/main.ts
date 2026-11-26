@@ -9,8 +9,8 @@ export const paperTable = pgTable("papers", {
 
 export const roleEnum = pgEnum("role", ["reader", "writer", "manager"]);
 export const staffTable = pgTable("staff", {
-  paperID: integer("paper_id").references(() => paperTable.id, { onDelete: "cascade" }),
-  userID: text("user_id").references(() => user.id, { onDelete: "cascade" }),
+  paperID: integer("paper_id").notNull().references(() => paperTable.id, { onDelete: "cascade" }),
+  userID: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
   role: roleEnum().notNull().default("reader")
 }, (t) => [primaryKey({ columns: [t.paperID, t.userID] })]);
 
