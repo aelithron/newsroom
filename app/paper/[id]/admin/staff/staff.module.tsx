@@ -18,9 +18,9 @@ function StaffCard({ paperID, user, role, staffList, setStaffList }: { paperID: 
   if (!user) return null;
   const gravatarURL = `https://gravatar.com/avatar/${crypto.createHash("sha256").update(user.email.toLowerCase().trim()).digest("hex")}`;
   return (
-    <div className="flex gap-2 p-2 rounded-lg bg-slate-300 dark:bg-slate-800 w-fit">
+    <div className="flex gap-2 p-2 rounded-lg bg-slate-300 dark:bg-slate-800 w-full md:w-fit">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={user.image || gravatarURL} alt="User Profile Picture" width={90} height={90} className="rounded-lg" />
+      <img src={user.image || gravatarURL} alt="User Profile Picture" width={90} height={90} className="rounded-lg" referrerPolicy="no-referrer" />
       <div className="flex flex-col gap-1">
         <div className="flex gap-2">
           <h2 className="font-semibold text-lg">{user.name}</h2>

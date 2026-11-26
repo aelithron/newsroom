@@ -19,8 +19,8 @@ export default function Page({ params }: { params: Promise<{ id: string, resID: 
 async function ViewInterview({ params }: { params: Promise<{ id: string, resID: string }> }) {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return (<PaperNotFound />);
-  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt((await params).id) }, with: { memberships: true, interviews: true, questions: true } });
-  if (!paper || !paper.memberships.find((a) => a.id === session.user.id)) return (<PaperNotFound />);
+  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt((await params).id) }, with: { staff: true, interviews: true, questions: true } });
+  if (!paper || !paper.staff.find((a) => a.userID === session.user.id)) return (<PaperNotFound />);
   const resID = parseInt((await params).resID);
   const interview = paper.interviews.find((res) => res.id === resID);
   if (!interview) return (<ItemNotFound item="Interview" backLink={`/paper/${(await params).id}/interviews`} />);
@@ -31,7 +31,7 @@ async function ViewInterview({ params }: { params: Promise<{ id: string, resID: 
         <h1 className="font-semibold text-2xl"><FontAwesomeIcon icon={faMicrophone} /> Interview with {interview.name || "Unknown"}</h1>
         <h2 className="text-xl pl-1 hidden md:block">-</h2>
         <h2 className="text-xl italic">{paper.name}</h2>
-        <Link href={`/paper/${(await params).id}/interviews/edit/${(await params).resID}`} className="hover:text-sky-500 p-1 rounded-lg bg-violet-300 dark:bg-violet-800 ml-2"><FontAwesomeIcon icon={faPencil} /> Edit</Link>
+        {["manager", "writer"].includes(paper.staff.find((e) => e.userID === session.user.id)!.role) && <Link href={`/paper/${(await params).id}/interviews/edit/${(await params).resID}`} className="hover:text-sky-500 p-1 rounded-lg bg-violet-300 dark:bg-violet-800 ml-2"><FontAwesomeIcon icon={faPencil} /> Edit</Link>}
       </div>
       {interview.responses.sort((a, b) => b.q - a.q).map((response) => <div key={response.q} className="bg-slate-300 dark:bg-slate-800 p-2 rounded-lg flex flex-col w-fit">
         <h2 className="text-lg font-semibold">{(paper.questions.find(((question) => question.id === response.q)) || { question: "Unknown Question" }).question}</h2>

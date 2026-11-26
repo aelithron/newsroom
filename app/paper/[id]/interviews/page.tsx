@@ -20,8 +20,8 @@ export default function Page({ params }: { params: Promise<{ id: string }> }) {
 async function PaperInterviews({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return (<PaperNotFound />);
-  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt((await params).id) }, with: { memberships: true, interviews: true, questions: true } });
-  if (!paper || !paper.memberships.find((a) => a.id === session.user.id)) return (<PaperNotFound />);
+  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt((await params).id) }, with: { staff: true, interviews: true, questions: true } });
+  if (!paper || !paper.staff.find((a) => a.userID === session.user.id)) return (<PaperNotFound />);
   return (
     <div className="flex flex-col gap-2">
       <BackButton link={`/paper/${(await params).id}`} />
@@ -32,7 +32,7 @@ async function PaperInterviews({ params }: { params: Promise<{ id: string }> }) 
             <h2 className="text-xl pl-1 hidden md:block">-</h2>
             <h2 className="text-xl italic">{paper.name}</h2>
           </div>
-          <Link href={`/paper/${(await params).id}/interviews/create`} className="bg-violet-300 dark:bg-violet-800 p-1 rounded-lg hover:text-sky-500 w-fit mt-1 mb-2 mx-auto md:mx-0"><FontAwesomeIcon icon={faPlus} /> Add Interview</Link>
+          {["manager", "writer"].includes(paper.staff.find((e) => e.userID === session.user.id)!.role) && <Link href={`/paper/${(await params).id}/interviews/create`} className="bg-violet-300 dark:bg-violet-800 p-1 rounded-lg hover:text-sky-500 w-fit mt-1 mb-2 mx-auto md:mx-0"><FontAwesomeIcon icon={faPlus} /> Add Interview</Link>}
           {paper.interviews.length < 1 && <div className="flex flex-col gap-1 mt-2 text-lg lg:col-span-2">
             <p>This paper doesn&apos;t have any interviews yet!</p>
             <p>Add one with the button above, or ask another team member to.</p>
@@ -47,7 +47,7 @@ async function PaperInterviews({ params }: { params: Promise<{ id: string }> }) 
             </Link>)}
           </div>}
         </div>
-        <CreateQuestions paperID={parseInt((await params).id)} initQuestions={paper.questions.map((question) => { return { id: question.id, text: question.question, enabled: question.enabled } })} />
+        <CreateQuestions paperID={parseInt((await params).id)} initQuestions={paper.questions.map((question) => { return { id: question.id, text: question.question, enabled: question.enabled } })} disableEdits={!["manager", "writer"].includes(paper.staff.find((e) => e.userID === session.user.id)!.role)} />
       </div>
     </div>
   );

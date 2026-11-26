@@ -3,7 +3,7 @@ import { faPencil, faPlus, faSave, faTrash } from "@fortawesome/free-solid-svg-i
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState, type SubmitEvent, type Dispatch, type SetStateAction } from "react";
 
-export default function CreateQuestions({ paperID, initQuestions }: { paperID: number, initQuestions: { id: number, text: string, enabled: boolean }[] }) {
+export default function CreateQuestions({ paperID, initQuestions, disableEdits }: { paperID: number, initQuestions: { id: number, text: string, enabled: boolean }[], disableEdits: boolean }) {
   const [allQuestions, setAllQuestions] = useState<{ id: number, text: string, enabled: boolean }[]>(initQuestions);
   const [question, setQuestion] = useState<string>("");
   const [showDisabled, setShowDisabled] = useState<boolean>(false);
@@ -35,14 +35,16 @@ export default function CreateQuestions({ paperID, initQuestions }: { paperID: n
   }
   return (
     <div className="flex flex-col gap-2">
-      <h2 className="text-xl font-semibold">New Question:</h2>
-      <form onSubmit={handleSubmit} className="flex gap-4 mb-2">
-        <div className="flex flex-col gap-1">
-          <label className="font-semibold flex justify-between w-81"><p>Question</p> <p className="text-red-400">*</p></label>
-          <input className="bg-slate-300 dark:bg-slate-800 w-81 p-1 rounded-lg" value={question} onChange={(e) => setQuestion(e.target.value)} />
-        </div>
-        <button type="submit" className="bg-violet-300 dark:bg-violet-800 p-2 rounded-lg hover:text-sky-500 h-fit my-auto"><FontAwesomeIcon icon={faPlus} /></button>
-      </form>
+      {!disableEdits && <div className="flex flex-col gap-2">
+        <h2 className="text-xl font-semibold">New Question:</h2>
+        <form onSubmit={handleSubmit} className="flex gap-4 mb-2">
+          <div className="flex flex-col gap-1">
+            <label className="font-semibold flex justify-between w-81"><p>Question</p> <p className="text-red-400">*</p></label>
+            <input className="bg-slate-300 dark:bg-slate-800 w-81 p-1 rounded-lg" value={question} onChange={(e) => setQuestion(e.target.value)} />
+          </div>
+          <button type="submit" className="bg-violet-300 dark:bg-violet-800 p-2 rounded-lg hover:text-sky-500 h-fit my-auto"><FontAwesomeIcon icon={faPlus} /></button>
+        </form>
+      </div>}
       <div className="flex gap-4">
         <h2 className="text-xl font-semibold">Questions</h2>
         <div className="flex gap-2 bg-slate-300 dark:bg-slate-800 rounded-lg px-2 py-1 items-center">
@@ -53,7 +55,7 @@ export default function CreateQuestions({ paperID, initQuestions }: { paperID: n
       {(!showDisabled ? allQuestions.filter((q) => q.enabled) : allQuestions).sort((a, b) => b.id - a.id).map((question) => <div key={question.id}>
         {editedID !== question.id && <div className="flex gap-2 items-center">
           <p>{question.text}</p>
-          <button onClick={() => setEditedID(question.id)} className="bg-violet-300 dark:bg-violet-800 p-1 rounded-lg hover:text-sky-500"><FontAwesomeIcon icon={faPencil} /></button>
+          {!disableEdits && <button onClick={() => setEditedID(question.id)} className="bg-violet-300 dark:bg-violet-800 p-1 rounded-lg hover:text-sky-500"><FontAwesomeIcon icon={faPencil} /></button>}
         </div>}
         {editedID === question.id && <EditQuestion id={question.id} paperID={paperID} origText={question.text} origEnabled={question.enabled} allQuestions={allQuestions} setAllQuestions={setAllQuestions} setEditedID={setEditedID} />}
       </div>)}
