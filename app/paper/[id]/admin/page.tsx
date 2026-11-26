@@ -1,4 +1,4 @@
-import { BackButton, Loader, MenuCard, PaperNotFound } from "@/app/ui.module";
+import { BackButton, Loader, MenuCard, NoPermission, PaperNotFound } from "@/app/ui.module";
 import { auth } from "@/utils/auth";
 import { db } from "@/utils/db";
 import { faBriefcase, faNewspaper, faUsers } from "@fortawesome/free-solid-svg-icons";
@@ -18,8 +18,9 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 async function AdminHome({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return (<PaperNotFound />);
-  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt((await params).id) }, with: { memberships: true } });
-  if (!paper || !paper.memberships.find((a) => a.id === session.user.id)) return (<PaperNotFound />);
+  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt((await params).id) }, with: { staff: true } });
+  if (!paper || !paper.staff.find((a) => a.userID === session.user.id)) return (<PaperNotFound />);
+  if (paper.staff.find((a) => a.userID === session.user.id)!.role !== "manager") return (<NoPermission backLink={`/paper/${(await params).id}`} />)
   return (
     <div className="flex flex-col gap-2">
       <BackButton link={`/paper/${(await params).id}`} className="mb-2" />

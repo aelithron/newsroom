@@ -1,4 +1,4 @@
-import { BackButton, ItemNotFound, Loader, PaperNotFound } from "@/app/ui.module";
+import { BackButton, ItemNotFound, Loader, NoPermission, PaperNotFound } from "@/app/ui.module";
 import { auth } from "@/utils/auth";
 import { db } from "@/utils/db";
 import { faMicrophone } from "@fortawesome/free-solid-svg-icons";
@@ -19,8 +19,9 @@ export default function Page({ params }: { params: Promise<{ id: string, resID: 
 async function EditInterview({ params }: { params: Promise<{ id: string, resID: string }> }) {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return (<PaperNotFound />);
-  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt((await params).id) }, with: { memberships: true, interviews: true, questions: true } });
-  if (!paper || !paper.memberships.find((a) => a.id === session.user.id)) return (<PaperNotFound />);
+  const paper = await db.query.paperTable.findFirst({ where: { id: parseInt((await params).id) }, with: { staff: true, interviews: true, questions: true } });
+  if (!paper || !paper.staff.find((a) => a.userID === session.user.id)) return (<PaperNotFound />);
+  if (!["manager", "writer"].includes(paper.staff.find((e) => e.userID === session.user.id)!.role)) return (<NoPermission backLink={`/paper/${(await params).id}/interviews`} />);
   const resID = parseInt((await params).resID);
   const interview = paper.interviews.find((res) => res.id === resID);
   if (!interview) return (<ItemNotFound item="Interview" backLink={`/paper/${(await params).id}/interviews`} />);

@@ -1,5 +1,5 @@
 import type { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { faAngleRight, faArrowLeft, faHome } from "@fortawesome/free-solid-svg-icons";
+import { faAngleRight, faArrowLeft, faHome, faLock, faQuestion } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { CSSProperties, ReactNode, ViewTransition } from "react";
@@ -42,19 +42,32 @@ export function RoleParser({ role }: { role: string | null }) {
       return null;
   }
 }
+export function NoPermission({ backLink }: { backLink?: string }) {
+  return (
+    <div className="flex flex-col min-h-screen text-center justify-center align-middle items-center gap-8 fixed inset-0">
+      <p className="text-3xl font-semibold">No Permission</p>
+      <FontAwesomeIcon icon={faLock} className="text-5xl" />
+      <p>You don&apos;t have permission to access this resource.</p>
+      <Link href={backLink || "/paper"} className="bg-violet-300 dark:bg-violet-800 rounded-lg p-1 w-fit mt-2 hover:text-sky-500 text-xl"><FontAwesomeIcon icon={faHome} /> Go Home</Link>
+    </div>
+  )
+}
 export function PaperNotFound() {
   return (
-    <div className="flex flex-col">
-      <p className="text-lg font-semibold">Paper not found!</p>
-      <Link href="/paper" className="bg-violet-300 dark:bg-violet-800 rounded-lg p-1 w-fit mt-2 hover:text-sky-500"><FontAwesomeIcon icon={faHome} /> Go Home</Link>
+    <div className="flex flex-col min-h-screen text-center justify-center align-middle items-center gap-8 fixed inset-0">
+      <p className="text-3xl font-semibold">Paper Not Found</p>
+      <FontAwesomeIcon icon={faQuestion} className="text-5xl" />
+      <p>Either this paper doesn&apos;t exist, or you don&apos;t have access to it.</p>
+      <Link href="/paper" className="bg-violet-300 dark:bg-violet-800 rounded-lg p-1 w-fit mt-2 hover:text-sky-500 text-xl"><FontAwesomeIcon icon={faHome} /> Go Home</Link>
     </div>
   );
 }
 export function ItemNotFound({ item, backLink }: { item: "Interview", backLink?: string }) {
   return (
-    <div className="flex flex-col">
-      <p className="text-lg font-semibold">{item} not found!</p>
-      <Link href={backLink || "/paper"} className="bg-violet-300 dark:bg-violet-800 rounded-lg p-1 w-fit mt-2 hover:text-sky-500"><FontAwesomeIcon icon={faArrowLeft} /> Go Back</Link>
+    <div className="flex flex-col min-h-screen text-center justify-center align-middle items-center gap-8 fixed inset-0">
+      <p className="text-3xl font-semibold">{item} Not Found</p>
+      <FontAwesomeIcon icon={faQuestion} className="text-5xl" />
+      <Link href={backLink || "/paper"} className="bg-violet-300 dark:bg-violet-800 rounded-lg p-1 w-fit mt-2 hover:text-sky-500 text-xl"><FontAwesomeIcon icon={faArrowLeft} /> Go Back</Link>
     </div>
   );
 }
