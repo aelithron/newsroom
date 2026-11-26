@@ -1,5 +1,5 @@
 "use client";
-import { faSave } from "@fortawesome/free-solid-svg-icons";
+import { faSave, faUserMinus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { type Dispatch, type SetStateAction, type SubmitEvent, useState } from "react";
 import crypto from "crypto";
@@ -22,7 +22,10 @@ function StaffCard({ paperID, user, role, staffList, setStaffList }: { paperID: 
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={user.image || gravatarURL} alt="User Profile Picture" width={90} height={90} className="rounded-lg" />
       <div className="flex flex-col gap-1">
-        <h2 className="font-semibold text-lg">{user.name}</h2>
+        <div className="flex gap-2">
+          <h2 className="font-semibold text-lg">{user.name}</h2>
+          <RemoveStaff paperID={paperID} userID={user.id} userName={user.name} staffList={staffList} setStaffList={setStaffList} />
+        </div>
         <p>Email: {user.email}</p>
         <StaffEditor paperID={paperID} user={user} currentRole={role} staffList={staffList} setStaffList={setStaffList} />
       </div>
@@ -57,24 +60,6 @@ function StaffEditor({ paperID, user, currentRole, staffList, setStaffList }: { 
     base.push({ userID: user.id, role });
     setStaffList(base);
   }
-  async function handleDelete() {
-    if (!edited) return;
-    let body;
-    try {
-      const res = await fetch("/api/paper/staff", { method: "DELETE", body: JSON.stringify({ paperID, userID: user.id }) });
-      body = await res.json();
-    } catch (e) {
-      console.error(`Error removing user!\n${e}`);
-      alert(`Error removing user: unknown (check browser console)`);
-      return;
-    }
-    if (body.error) {
-      alert(`Error removing user: ${body.message} (${body.error})`);
-      return;
-    }
-    const base = [...staffList].filter((entry) => entry.userID !== user.id);
-    setStaffList(base);
-  }
   return (
     <form className="flex flex-col gap-1" onSubmit={handleSubmit}>
       <div className="flex gap-1 items-center">
@@ -88,4 +73,26 @@ function StaffEditor({ paperID, user, currentRole, staffList, setStaffList }: { 
       </div>
     </form>
   )
+}
+function RemoveStaff({ paperID, userID, userName, staffList, setStaffList }: { paperID: number, userID: string, userName: string, staffList: { userID: string, role: string }[], setStaffList: Dispatch<SetStateAction<{ userID: string, role: string }[]>> }) {
+  async function handleDelete() {
+    const result = confirm(`Are you sure you want to remove ${userName}?\nThey will immediately lose access to the paper, and won't be able to access it again unless re-added by a manager.`);
+    if (!result) return;
+    let body;
+    try {
+      const res = await fetch("/api/paper/staff", { method: "DELETE", body: JSON.stringify({ paperID, userID }) });
+      body = await res.json();
+    } catch (e) {
+      console.error(`Error removing user!\n${e}`);
+      alert(`Error removing user: unknown (check browser console)`);
+      return;
+    }
+    if (body.error) {
+      alert(`Error removing user: ${body.message} (${body.error})`);
+      return;
+    }
+    const base = [...staffList].filter((entry) => entry.userID !== userID);
+    setStaffList(base);
+  }
+  return (<button type="button" onClick={handleDelete} className="hover:text-sky-500"><FontAwesomeIcon icon={faUserMinus} /></button>);
 }
