@@ -23,7 +23,7 @@ async function StaffListPage({ params }: { params: Promise<{ id: string }> }) {
   if (!paper || !paper.memberships.find((a) => a.id === session.user.id)) return (<PaperNotFound />);
   return (
     <div className="flex flex-col gap-2">
-      <BackButton link={`/paper/${(await params).id}`} className="mb-2" />
+      <BackButton link={`/paper/${(await params).id}/admin`} className="mb-2" />
       <div className="flex flex-col md:flex-row gap-1 align-middle items-center">
         <h1 className="font-semibold text-2xl"><FontAwesomeIcon icon={faUsers} /> Staff</h1>
         <h2 className="text-xl pl-1 hidden md:block">-</h2>

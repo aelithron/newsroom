@@ -55,6 +55,10 @@ function StaffEditor({ paperID, user, currentRole, staffList, setStaffList }: { 
       alert(`Error editing user's role: ${body.message} (${body.error})`);
       return;
     }
+    if (body.changeFlag) {
+      setEdited(false);
+      return;
+    }
     setEdited(false);
     const base = [...staffList].filter((entry) => entry.userID !== user.id);
     base.push({ userID: user.id, role });
