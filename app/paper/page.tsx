@@ -43,7 +43,7 @@ async function Papers() {
   }
   return (
     <div className="flex flex-col gap-3 mt-4">
-      {userInfo.invites.length >= 1 && <InviteUI inviteCount={userInfo.invites.length} />}
+      {userInfo.invites.filter((invite) => invite.status === "pending").length >= 1 && <InviteUI inviteCount={userInfo.invites.filter((invite) => invite.status === "pending").length} />}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {userInfo.papers.map((paper) => <Link key={paper.id} href={`/paper/${paper.id}`} className="flex flex-col bg-slate-200 dark:bg-slate-800 p-2 rounded-lg">
           <h1 className="hover:text-sky-500 font-semibold text-lg"><FontAwesomeIcon icon={faNewspaper} /> {paper.name}</h1>

@@ -14,12 +14,14 @@ export const staffTable = pgTable("staff", {
   role: roleEnum().notNull().default("reader")
 }, (t) => [primaryKey({ columns: [t.paperID, t.userID] })]);
 
+export const inviteStatusEnum = pgEnum("invite_status", ["pending", "declined", "accepted"])
 export const inviteTable = pgTable("invites", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   paperID: integer("paper_id").notNull().references(() => paperTable.id, { onDelete: "cascade" }),
   email: text().notNull(),
-  pending: boolean().notNull().default(true),
-  role: roleEnum().notNull().default("reader")
+  status: inviteStatusEnum().notNull().default("pending"),
+  role: roleEnum().notNull().default("reader"),
+  inviter: text().references(() => user.id, { onDelete: "set null" })
 });
 
 export const interviewQuestionTable = pgTable("interview_questions", {
@@ -92,6 +94,10 @@ export const relations = defineRelationsPart({ staffTable, paperTable, interview
     invitedPapers: r.many.paperTable({
       from: r.user.email.through(r.inviteTable.email),
       to: r.paperTable.id.through(r.inviteTable.paperID)
+    }),
+    invitingUsers: r.many.user({
+      from: r.user.email.through(r.inviteTable.email),
+      to: r.user.id.through(r.inviteTable.inviter) 
     })
   },
   interviewTable: {
