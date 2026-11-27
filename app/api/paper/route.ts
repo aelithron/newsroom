@@ -28,7 +28,7 @@ export async function PATCH(req: NextRequest) {
   } catch {
     return NextResponse.json({ error: "malformed", message: "Your request body isn't properly formatted JSON!" }, { status: 400 });
   }
-  if (!body.paperID || (body.paperID as string).trim().length < 1) return NextResponse.json({ error: "invalid_paper", message: "Your paper ID is missing/invalid!" }, { status: 400 });
+  if (!body.paperID || Number.isNaN(parseInt(body.paperID))) return NextResponse.json({ error: "invalid_paper", message: "Your paper ID is missing/invalid!" }, { status: 400 });
   const paper = await db.query.paperTable.findFirst({ where: { id: parseInt(body.paperID) }, with: { staff: true } });
   if (!paper || !paper.staff.find((e) => e.userID === session.user.id)) return NextResponse.json({ error: "not_found", message: "Either that paper ID doesn't exist, or you don't have permission to access it." }, { status: 404 });
   if (paper.staff.find((e) => e.userID === session.user.id)!.role !== "manager") return NextResponse.json({ error: "no_permission", message: "You don't have permission on this paper to do this." }, { status: 403 });

@@ -6,7 +6,7 @@ import { CSSProperties, ReactNode, ViewTransition } from "react";
 import { ClockLoader, PulseLoader } from "react-spinners";
 
 export function BackButton({ link, className }: { link: string, className?: string }) {
-  return (<Link href={link} className={`p-1 bg-slate-300 dark:bg-slate-800 rounded-xl w-fit hover:text-sky-500 ${className === undefined ? className : ""}`}><FontAwesomeIcon icon={faArrowLeft} /></Link>);
+  return (<Link href={link} className={`p-1 bg-slate-300 dark:bg-slate-800 rounded-xl w-fit hover:text-sky-500 text-lg md:text-base ${className === undefined ? className : ""}`}><FontAwesomeIcon icon={faArrowLeft} /></Link>);
 }
 export function Loader({ children }: { children?: ReactNode }) {
   const override: CSSProperties = { alignItems: "flex-end", display: "flex", marginBottom: 4 };
