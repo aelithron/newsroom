@@ -36,8 +36,8 @@ async function Papers() {
     return (
       <div className="flex flex-col gap-1 mt-2">
         <p>You aren&apos;t a staff member on any papers!</p>
-        <p>Please ask your manager/admin to add <b>{session.user.email}</b> to a paper.</p>
-        <p>Alternatively, <Link href={"/paper/create"} className="underline hover:text-sky-500">create one here</Link>.</p>
+        <p>Please ask your manager/admin to invite <b>{session.user.email}</b> to a paper.</p>
+        <p>Alternatively, you can <Link href={"/paper/create"} className="underline hover:text-sky-500">create one here</Link>.</p>
       </div>
     )
   }

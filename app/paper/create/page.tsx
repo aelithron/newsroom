@@ -16,7 +16,7 @@ export default function Page() {
       <div className="flex flex-col min-h-screen p-8 md:px-20">
         <BackButton link="/paper" />
         <h1 className="text-2xl font-semibold mt-2 text-center md:text-start"><FontAwesomeIcon icon={faPlus} /> Create a Paper</h1>
-        <Suspense fallback={<p className="text-center md:text-start">Note: If you are looking to join a paper, ask your manager/admin to add you instead.</p>}><Notice /></Suspense>
+        <Suspense fallback={<p className="text-center md:text-start">Note: If you are looking to join a paper, ask your manager/admin to invite you instead.</p>}><Notice /></Suspense>
         <CreatePaperForm />
       </div>
     </main>
@@ -24,6 +24,6 @@ export default function Page() {
 }
 async function Notice() {
   const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) return <p className="text-center md:text-start">Note: If you are looking to join a paper, ask your manager/admin to add you instead.</p>
-  return (<p className="text-center md:text-start">Note: If you are looking to join a paper, ask your manager/admin to add you instead (under the email address <b>{session.user.email}</b>).</p>);
+  if (!session) return <p className="text-center md:text-start">Note: If you are looking to join a paper, ask your manager/admin to invite you instead.</p>
+  return (<p className="text-center md:text-start">Note: If you are looking to join a paper, ask your manager/admin to invite you instead (with the email address <b>{session.user.email}</b>).</p>);
 }

@@ -18,7 +18,8 @@ export const inviteTable = pgTable("invites", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   paperID: integer("paper_id").notNull().references(() => paperTable.id, { onDelete: "cascade" }),
   email: text().notNull(),
-  pending: boolean().notNull().default(false)
+  pending: boolean().notNull().default(true),
+  role: roleEnum().notNull().default("reader")
 });
 
 export const interviewQuestionTable = pgTable("interview_questions", {
@@ -87,6 +88,10 @@ export const relations = defineRelationsPart({ staffTable, paperTable, interview
     invites: r.many.inviteTable({
       from: r.user.email,
       to: r.inviteTable.email
+    }),
+    invitedPapers: r.many.paperTable({
+      from: r.user.email.through(r.inviteTable.email),
+      to: r.paperTable.id.through(r.inviteTable.paperID)
     })
   },
   interviewTable: {
