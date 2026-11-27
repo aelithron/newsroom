@@ -14,6 +14,13 @@ export const staffTable = pgTable("staff", {
   role: roleEnum().notNull().default("reader")
 }, (t) => [primaryKey({ columns: [t.paperID, t.userID] })]);
 
+export const inviteTable = pgTable("invites", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  paperID: integer("paper_id").notNull().references(() => paperTable.id, { onDelete: "cascade" }),
+  email: text().notNull(),
+  pending: boolean().notNull().default(false)
+});
+
 export const interviewQuestionTable = pgTable("interview_questions", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   paperID: integer("paper_id").notNull().references(() => paperTable.id, { onDelete: "cascade" }),
@@ -29,7 +36,7 @@ export const interviewTable = pgTable("interviews", {
   createdAt: timestamp("created_at", { mode: "date", withTimezone: true }).notNull().defaultNow()
 });
 
-export const relations = defineRelationsPart({ staffTable, paperTable, interviewTable, interviewQuestionTable, user }, (r) => ({
+export const relations = defineRelationsPart({ staffTable, paperTable, interviewTable, interviewQuestionTable, inviteTable, user }, (r) => ({
   paperTable: {
     memberships: r.many.user({
       from: r.paperTable.id.through(r.staffTable.paperID),
@@ -38,6 +45,10 @@ export const relations = defineRelationsPart({ staffTable, paperTable, interview
     staff: r.many.staffTable({
       from: r.paperTable.id,
       to: r.staffTable.paperID
+    }),
+    invites: r.many.inviteTable({
+      from: r.paperTable.id,
+      to: r.inviteTable.paperID
     }),
     interviews: r.many.interviewTable({
       from: r.paperTable.id,
@@ -54,6 +65,16 @@ export const relations = defineRelationsPart({ staffTable, paperTable, interview
       to: r.user.id
     })
   },
+  inviteTable: {
+    paper: r.one.paperTable({
+      from: r.inviteTable.paperID,
+      to: r.paperTable.id
+    }),
+    user: r.one.user({
+      from: r.inviteTable.email,
+      to: r.user.email
+    })
+  },
   user: {
     papers: r.many.paperTable({
       from: r.user.id.through(r.staffTable.userID),
@@ -62,6 +83,10 @@ export const relations = defineRelationsPart({ staffTable, paperTable, interview
     staff: r.many.staffTable({
       from: r.user.id,
       to: r.staffTable.userID
+    }),
+    invites: r.many.inviteTable({
+      from: r.user.email,
+      to: r.inviteTable.email
     })
   },
   interviewTable: {
