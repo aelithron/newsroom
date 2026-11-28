@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { headers } from "next/headers";
 import { Suspense } from "react";
 import crypto from "crypto";
+import InviteControls from "./invites.module";
 
 export default function Page() {
   return (
@@ -40,13 +41,16 @@ async function InvitePage() {
       {validInvites.map((invite) => <div key={invite.id} className="flex flex-col gap-2 bg-slate-300 dark:bg-slate-800 rounded-lg p-2">
         <h2 className="font-semibold text-lg"><FontAwesomeIcon icon={faNewspaper} /> {(userInfo.invitedPapers.find((paper) => paper.id === invite.paperID) || { name: "Unknown/Invalid Paper" }).name}</h2>
         <RoleParser role={invite.role} />
-        <div className="flex gap-1 items-center">
-          <p>Inviter: </p>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={inviterPFP(userInfo.invitingUsers.find((user) => user.id === invite.inviter) || { image: null, email: null })} alt="Profile Picture" height={30} width={30} className="rounded-lg" referrerPolicy="no-referrer" />
-          <p>{(userInfo.invitingUsers.find((user) => user.id === invite.inviter) || { name: "Unknown" }).name}</p>
+        <div className="flex flex-col md:flex-row gap-1 md:items-center">
+          <div className="flex gap-1 md:items-center">
+            <p>Inviter: </p>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={inviterPFP(userInfo.invitingUsers.find((user) => user.id === invite.inviter) || { image: null, email: null })} alt="Profile Picture" height={30} width={30} className="rounded-lg" referrerPolicy="no-referrer" />
+            <p>{(userInfo.invitingUsers.find((user) => user.id === invite.inviter) || { name: "Unknown" }).name}</p>
+          </div>
           {userInfo.invitingUsers.find((user) => user.id === invite.inviter) && <p className="text-sm">({userInfo.invitingUsers.find((user) => user.id === invite.inviter)!.email})</p>}
         </div>
+        <InviteControls inviteID={invite.id} paperID={invite.paperID} />
       </div>)}
       {validInvites.length < 1 && <div className="text-center md:text-start md:col-span-2">
         <p>There are no valid invites for you to accept.</p>
